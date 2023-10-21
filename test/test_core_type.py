@@ -67,7 +67,8 @@ class TypeTest(unittest.TestCase):
             def __write__(self, s):
                 raise Exception()
         s = rdpy.core.type.Stream()
-        self.assertRaises(Exception, s.writeType, TestType(conditional = lambda:False))
+        with self.assertRaises(Exception):
+            s.writeType(TestType(conditional = lambda:False))
         
     def test_type_read_conditional_true(self):
         """
@@ -88,9 +89,9 @@ class TypeTest(unittest.TestCase):
             def __read__(self, s):
                 raise Exception()
         s = rdpy.core.type.Stream()
-        self.assertRaises(Exception, s.readType, TestType(conditional = lambda:False))
-        
-    
+        with self.assertRaises(Exception):
+            s.readType(TestType(conditional = lambda:False))
+
     def test_sizeof_conditional_true(self):
         """
         @summary: test if sizeof of simple type is init value(4) when type is conditional true
