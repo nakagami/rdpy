@@ -856,9 +856,12 @@ class Stream(BytesIO):
     """
     @summary:  Stream use to read all types
     """
-    def __init__(self, b):
-        self.len = len(b)
-        super().__init__(b)
+    def __init__(self, *args):
+        if len(args):
+            self.len = len(args[0])
+        else:
+            self.len = 0
+        super().__init__(*args)
 
     def dataLen(self):
         """
