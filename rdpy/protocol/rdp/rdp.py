@@ -26,8 +26,8 @@ from rdpy.core.error import CallPureVirtualFuntion, InvalidValue
 from . import pdu
 import rdpy.core.log as log
 from . import tpkt, x224, sec
-from t125 import mcs, gcc
-from nla import cssp, ntlm
+from .t125 import mcs, gcc
+from .nla import cssp, ntlm
 
 class SecurityLevel(object):
     """

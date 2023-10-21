@@ -21,9 +21,9 @@
 RDP Standard security layer
 """
 
-import sha, md5
-import lic, tpkt
-from t125 import gcc, mcs
+from hashlib import sha1, md5
+from . import lic, tpkt
+from .t125 import gcc, mcs
 from rdpy.core.type import CompositeType, CallableValue, Stream, UInt32Le, UInt16Le, String, sizeof, UInt8
 from rdpy.core.layer import LayerAutomata, IStreamSender
 from rdpy.core.error import InvalidExpectedDataException
@@ -107,7 +107,7 @@ def saltedHash(inputData, salt, salt1, salt2):
     @param salt2: another another salt (ex: server random)
     @return : MD5(Salt + SHA1(Input + Salt + Salt1 + Salt2))
     """
-    sha1Digest = sha.new()
+    sha1Digest = sha1.new()
     md5Digest = md5.new()
     
     sha1Digest.update(inputData)
@@ -161,7 +161,7 @@ def macData(macSaltKey, data):
     @param data: {str} data to sign
     @return: {str} signature
     """
-    sha1Digest = sha.new()
+    sha1Digest = sha1.new()
     md5Digest = md5.new()
     
     #encode length
@@ -189,7 +189,7 @@ def macSaltedData(macSaltKey, data, encryptionCount):
     @param encryptionCount: nb encrypted packet
     @return: {str} signature
     """
-    sha1Digest = sha.new()
+    sha1Digest = sha1.new()
     md5Digest = md5.new()
     
     #encode length
@@ -220,7 +220,7 @@ def tempKey(initialKey, currentKey):
     @param currentKey: {str} key actually used
     @return: {str} temp key
     """
-    sha1Digest = sha.new()
+    sha1Digest = sha1.new()
     md5Digest = md5.new()
     
     sha1Digest.update(initialKey)
