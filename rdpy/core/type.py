@@ -856,18 +856,22 @@ class Stream(StringIO):
     """
     @summary:  Stream use to read all types
     """
+    def __init__(self, s):
+        self.len = len(s)
+        super().__init__(s)
+
     def dataLen(self):
         """
         @return: not yet read length
         """
-        return self.len - self.pos
+        return self.len - self.tell()
     
     def readLen(self):
         """
         @summary: compute already read size
         @return: read size of stream
         """
-        return self.pos
+        return self.tell()
     
     def readType(self, value):
         """
