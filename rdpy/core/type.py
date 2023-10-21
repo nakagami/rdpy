@@ -703,7 +703,7 @@ class UInt24Be(SimpleType):
         @summary: special read for a special type
         @param s: Stream
         """
-        self.value = struct.unpack(self._structFormat, '\x00' + s.read(self._typeSize))[0]
+        self.value = struct.unpack(self._structFormat, b'\x00' + s.read(self._typeSize))[0]
         
 class UInt24Le(SimpleType):
     """
@@ -734,7 +734,7 @@ class UInt24Le(SimpleType):
         @summary: special read for a special type
         @param s: Stream
         """
-        self.value = struct.unpack(self._structFormat, s.read(self._typeSize) + '\x00')[0]
+        self.value = struct.unpack(self._structFormat, s.read(self._typeSize) + b'\x00')[0]
         
 class String(Type, CallableValue):
     """
@@ -863,18 +863,22 @@ class Stream(BytesIO):
             self.len = 0
         super().__init__(*args)
 
+    @property
+    def pos(self):
+        return self.tell()
+
     def dataLen(self):
         """
         @return: not yet read length
         """
-        return self.len - self.tell()
+        return self.len - self.pos
     
     def readLen(self):
         """
         @summary: compute already read size
         @return: read size of stream
         """
-        return self.tell()
+        return self.pos
     
     def readType(self, value):
         """
