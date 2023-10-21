@@ -741,7 +741,7 @@ class String(Type, CallableValue):
     @summary:  String type
                 Leaf in Type tree
     """
-    def __init__(self, value = "", readLen = None, conditional = lambda:True, optional = False, constant = False, unicode = False, until = None):
+    def __init__(self, value = "", readLen = None, conditional = lambda:True, optional = False, constant = False, until = None):
         """
         @param value: python string use for inner value
         @param readLen: length use to read in stream (SimpleType) if 0 read entire stream
@@ -750,14 +750,12 @@ class String(Type, CallableValue):
         @param optional:   If there is no enough byte in current stream
                             And optional is True, read type is ignored
         @param constant:   Check if object value doesn't change after read operation
-        @param unicode: Encode and decode value as unicode
         @param until: read until sequence is readed or write sequence at the end of string
         """
         Type.__init__(self, conditional = conditional, optional = optional, constant = constant)
         CallableValue.__init__(self, value)
         #type use to know read length
         self._readLen = readLen
-        self._unicode = unicode
         self._until = until
         
     def __cmp__(self, other):
@@ -786,7 +784,6 @@ class String(Type, CallableValue):
         """
         @summary:  Write the inner value after evaluation
                     Append until sequence if present
-                    Encode in unicode format if asked
         @param s: Stream
         """
         toWrite = self.value
@@ -794,10 +791,7 @@ class String(Type, CallableValue):
         if not self._until is None:
             toWrite += self._until
             
-        if self._unicode:
-            s.write(encodeUnicode(self.value))
-        else:
-            s.write(self.value)
+        s.write(self.value)
     
     def __read__(self, s):
         """
@@ -816,19 +810,12 @@ class String(Type, CallableValue):
         else:
             self.value = s.read(self._readLen.value)
         
-        if self._unicode:
-            self.value = decodeUnicode(self.value)
-        
     def __sizeof__(self):
         """
         @summary:  return length of string
-                    if string is unicode encode return 2*len(str) + 2
         @return: length of inner string
         """
-        if self._unicode:
-            return 2 * len(self.value) + 2
-        else:
-            return len(self.value)
+        return len(self.value)
     
 def encodeUnicode(s):
     """
