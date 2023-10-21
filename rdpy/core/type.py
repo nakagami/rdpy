@@ -26,7 +26,7 @@ We are in python!
 
 import struct
 from copy import deepcopy
-from io import StringIO
+from io import BytesIO
 from rdpy.core.error import InvalidExpectedDataException, InvalidSize, CallPureVirtualFuntion, InvalidValue
 import rdpy.core.log as log
 
@@ -852,13 +852,13 @@ def decodeUnicode(s):
         i += 1
     return r
 
-class Stream(StringIO):
+class Stream(BytesIO):
     """
     @summary:  Stream use to read all types
     """
-    def __init__(self, s):
-        self.len = len(s)
-        super().__init__(s)
+    def __init__(self, b):
+        self.len = len(b)
+        super().__init__(b)
 
     def dataLen(self):
         """
