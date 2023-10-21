@@ -917,6 +917,7 @@ class Stream(BytesIO):
             for element in value:
                 self.writeType(element)
             return
+        self.len += value._typeSize
         value.write(self)
         
 class ArrayType(Type):
