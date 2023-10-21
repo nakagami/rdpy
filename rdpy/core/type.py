@@ -867,6 +867,10 @@ class Stream(BytesIO):
     def pos(self):
         return self.tell()
 
+    @pos.setter
+    def pos(self, n):
+        self.seek(n)
+
     def dataLen(self):
         """
         @return: not yet read length
