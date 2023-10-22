@@ -123,7 +123,7 @@ class TestCsspNtlm(unittest.TestCase):
         interface = ntlm.NTLMv2SecurityInterface(rc4.RC4Key(ClientSealingKey), rc4.RC4Key(ServerSealingKey), ClientSigningKey, ServerSigningKey)
         
         EncryptedPubKeySrc = cssp.getPubKeyAuth(authenticate_data_request)
-        EncryptedPubKeyDst = interface.GSS_WrapEx(pubKeyHex.decode('base64'))
+        EncryptedPubKeyDst = interface.GSS_WrapEx(base64.b64decode(pubKeyHex))
         
         self.assertTrue(EncryptedPubKeySrc == EncryptedPubKeyDst, "Public key must be equals")
         
