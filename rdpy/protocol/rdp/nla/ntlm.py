@@ -23,6 +23,7 @@
 """
 
 import hashlib, hmac, struct, datetime
+from Crypto.Hash import MD4 as CryptoMD4
 from . import sspi
 import rdpy.security.pyDes as pyDes
 import rdpy.security.rc4 as rc4
@@ -360,7 +361,7 @@ def MD4(s):
     @param s: {str} input data
     @return: {str} MD4(s)
     """
-    return hashlib.new('md4', s).digest()
+    return CryptoMD4.new(s).digest()
 
 def MD5(s):
     """
@@ -368,7 +369,7 @@ def MD5(s):
     @param s: {str} input data
     @return: {str} MD5(s)
     """
-    return hashlib.new('md5', s).digest()
+    return hashlib.md5(s).digest()
 
 def Z(m):
     """
@@ -376,7 +377,7 @@ def Z(m):
     @param m: {int} size of string
     @return: \x00 * m 
     """
-    return "\x00" * m
+    return b"\x00" * m
 
 def RC4K(key, plaintext):
     """
