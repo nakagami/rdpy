@@ -145,7 +145,7 @@ class NegotiateMessage(CompositeType):
     """
     def __init__(self):
         CompositeType.__init__(self)
-        self.Signature = String("NTLMSSP\x00", readLen = CallableValue(8), constant = True)
+        self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000001, constant = True)
         
         self.NegotiateFlags = UInt32Le()
@@ -169,7 +169,7 @@ class ChallengeMessage(CompositeType):
     """
     def __init__(self):
         CompositeType.__init__(self)
-        self.Signature = String("NTLMSSP\x00", readLen = CallableValue(8), constant = True)
+        self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000002, constant = True)
         
         self.TargetNameLen = UInt16Le()
@@ -179,7 +179,7 @@ class ChallengeMessage(CompositeType):
         self.NegotiateFlags = UInt32Le()
         
         self.ServerChallenge = String(readLen = CallableValue(8))
-        self.Reserved = String("\x00" * 8, readLen = CallableValue(8))
+        self.Reserved = String(b"\x00" * 8, readLen = CallableValue(8))
         
         self.TargetInfoLen = UInt16Le()
         self.TargetInfoMaxLen = UInt16Le(lambda:self.TargetInfoLen.value)
@@ -216,7 +216,7 @@ class AuthenticateMessage(CompositeType):
     """
     def __init__(self):
         CompositeType.__init__(self)
-        self.Signature = String("NTLMSSP\x00", readLen = CallableValue(8), constant = True)
+        self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000003, constant = True)
         
         self.LmChallengeResponseLen = UInt16Le()
@@ -246,7 +246,7 @@ class AuthenticateMessage(CompositeType):
         self.NegotiateFlags = UInt32Le()
         self.Version = Version(conditional = lambda:(self.NegotiateFlags.value & Negotiate.NTLMSSP_NEGOTIATE_VERSION))
         
-        self.MIC = String("\x00" * 16, readLen = CallableValue(16))
+        self.MIC = String(b"\x00" * 16, readLen = CallableValue(16))
         self.Payload = String()
         
     def getUserName(self):
@@ -443,8 +443,8 @@ def ComputeResponsev2(ResponseKeyNT, ResponseKeyLM, ServerChallenge, ClientChall
     @param NegFlg: {int} Negotiation flags come from challenge message
     @see: https://msdn.microsoft.com/en-us/library/cc236700.aspx
     """
-    Responserversion = "\x01"
-    HiResponserversion = "\x01"
+    Responserversion = b"\x01"
+    HiResponserversion = b"\x01"
 
     temp = Responserversion + HiResponserversion + Z(6) + Time + ClientChallenge + Z(4) + ServerName
     NTProofStr = HMAC_MD5(ResponseKeyNT, ServerChallenge + temp)
