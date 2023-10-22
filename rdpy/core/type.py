@@ -741,7 +741,7 @@ class String(Type, CallableValue):
     @summary:  String type
                 Leaf in Type tree
     """
-    def __init__(self, value = "", readLen = None, conditional = lambda:True, optional = False, constant = False, until = None):
+    def __init__(self, value = b"", readLen = None, conditional = lambda:True, optional = False, constant = False, until = None):
         """
         @param value: python string use for inner value
         @param readLen: length use to read in stream (SimpleType) if 0 read entire stream
@@ -778,7 +778,7 @@ class String(Type, CallableValue):
         @summary: call when str function is call
         @return: inner python string
         """
-        return self.value
+        return self.value.decode("utf-16-le")
     
     def __write__(self, s):
         """
@@ -791,7 +791,7 @@ class String(Type, CallableValue):
         if not self._until is None:
             toWrite += self._until
             
-        s.write(self.value.encode("utf-16-le"))
+        s.write(self.value)
     
     def __read__(self, s):
         """
@@ -815,7 +815,7 @@ class String(Type, CallableValue):
         @summary:  return length of string
         @return: length of inner string
         """
-        return len(self.value.encode("utf-16-le"))
+        return len(self.value)
     
 def encodeUnicode(s):
     """

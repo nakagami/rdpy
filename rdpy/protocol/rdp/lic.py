@@ -127,10 +127,10 @@ class ProductInformation(CompositeType):
         self.dwVersion = UInt32Le()
         self.cbCompanyName = UInt32Le(lambda:sizeof(self.pbCompanyName))
         #may contain "Microsoft Corporation" from server microsoft
-        self.pbCompanyName = String("Microsoft Corporation", readLen = self.cbCompanyName, unicode = True)
+        self.pbCompanyName = String(b"Microsoft Corporation", readLen = self.cbCompanyName)
         self.cbProductId = UInt32Le(lambda:sizeof(self.pbProductId))
         #may contain "A02" from microsoft license server
-        self.pbProductId = String("A02", readLen = self.cbProductId, unicode = True)
+        self.pbProductId = String(b"A02", readLen = self.cbProductId)
 
 
 class Scope(CompositeType):
@@ -162,7 +162,7 @@ class ServerLicenseRequest(CompositeType):
     
     def __init__(self, readLen = None):
         CompositeType.__init__(self, readLen = readLen)
-        self.serverRandom = String("\x00" * 32, readLen = CallableValue(32))
+        self.serverRandom = String(b"\x00" * 32, readLen = CallableValue(32))
         self.productInfo = ProductInformation()
         self.keyExchangeList = LicenseBinaryBlob(BinaryBlobType.BB_KEY_EXCHG_ALG_BLOB)
         self.serverCertificate = LicenseBinaryBlob(BinaryBlobType.BB_CERTIFICATE_BLOB)
@@ -183,7 +183,7 @@ class ClientNewLicenseRequest(CompositeType):
         #pure microsoft client ;-)
         #http://msdn.microsoft.com/en-us/library/1040af38-c733-4fb3-acd1-8db8cc979eda#id10
         self.platformId = UInt32Le(0x04000000 | 0x00010000)
-        self.clientRandom = String("\x00" * 32, readLen = CallableValue(32))
+        self.clientRandom = String(b"\x00" * 32, readLen = CallableValue(32))
         self.encryptedPreMasterSecret = LicenseBinaryBlob(BinaryBlobType.BB_RANDOM_BLOB)
         self.ClientUserName = LicenseBinaryBlob(BinaryBlobType.BB_CLIENT_USER_NAME_BLOB)
         self.ClientMachineName = LicenseBinaryBlob(BinaryBlobType.BB_CLIENT_MACHINE_NAME_BLOB)
