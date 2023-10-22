@@ -791,7 +791,7 @@ class String(Type, CallableValue):
         if not self._until is None:
             toWrite += self._until
             
-        s.write(self.value)
+        s.write(self.value.encode("utf-16-le"))
     
     def __read__(self, s):
         """
@@ -815,7 +815,7 @@ class String(Type, CallableValue):
         @summary:  return length of string
         @return: length of inner string
         """
-        return len(self.value.encode("utf-8"))
+        return len(self.value.encode("utf-16-le"))
     
 def encodeUnicode(s):
     """
