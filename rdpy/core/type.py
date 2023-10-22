@@ -815,7 +815,7 @@ class String(Type, CallableValue):
         @summary:  return length of string
         @return: length of inner string
         """
-        return len(self.value)
+        return len(self.value.encode("utf-8"))
     
 def encodeUnicode(s):
     """
