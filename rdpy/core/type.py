@@ -101,7 +101,7 @@ class Type(object):
         old = deepcopy(self)
         self.__read__(s)
         #check constant value
-        if old != self:
+        if old.value != self.value:
             #rollback read value
             s.pos -= sizeof(self)
             raise InvalidExpectedDataException("%s const value expected %s != %s"%(self.__class__, old.value, self.value))
