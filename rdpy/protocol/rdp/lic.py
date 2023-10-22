@@ -321,9 +321,9 @@ class LicenseManager(object):
         #format message
         message = ClientNewLicenseRequest()
         message.clientRandom.value = clientRandom
-        message.encryptedPreMasterSecret.blobData.value = rsa.encrypt(preMasterSecret[::-1], serverCertificate.certData.getPublicKey())[::-1] + "\x00" * 8
-        message.ClientMachineName.blobData.value = self._hostname + "\x00"
-        message.ClientUserName.blobData.value = self._username + "\x00"
+        message.encryptedPreMasterSecret.blobData.value = rsa.encrypt(preMasterSecret[::-1], serverCertificate.certData.getPublicKey())[::-1] + b"\x00" * 8
+        message.ClientMachineName.blobData.value = self._hostname.encode('utf-8') + b"\x00"
+        message.ClientUserName.blobData.value = self._username.encode('utf-8') + b"\x00"
         self._transport.sendFlagged(sec.SecurityFlag.SEC_LICENSE_PKT, LicPacket(message))
         
     def sendClientChallengeResponse(self, platformChallenge):
