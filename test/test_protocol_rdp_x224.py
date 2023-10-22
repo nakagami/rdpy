@@ -93,8 +93,7 @@ class X224Test(unittest.TestCase):
                 s.pos = 0
                 t = x224.ClientConnectionRequestPDU()
                 s.readType(t)
-                
-                if t.protocolNeg.code != x224.NegociationType.TYPE_RDP_NEG_REQ:
+                if t.protocolNeg.code.value != x224.NegociationType.TYPE_RDP_NEG_REQ:
                     raise X224Test.X224_FAIL()
             
         def nextAutomata(data):
