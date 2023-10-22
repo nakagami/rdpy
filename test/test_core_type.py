@@ -66,10 +66,12 @@ class TypeTest(unittest.TestCase):
         class TestType(rdpy.core.type.Type):
             def __write__(self, s):
                 raise Exception()
+            def __sizeof__(self):
+                return 1
         s = rdpy.core.type.Stream()
         with self.assertRaises(Exception):
             s.writeType(TestType(conditional = lambda:False))
-        
+
     def test_type_read_conditional_true(self):
         """
         @summary: test when read is obligatory call write function
