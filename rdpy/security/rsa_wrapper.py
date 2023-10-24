@@ -52,7 +52,7 @@ def PrivateKey(d, n):
         n = rsa.transform.bytes2int(n)
     return { 'd' : d, 'n' : n }
 
-def int2bytes(i, fill_size=None):
+def int2bytes(i, fill_size=0):
     """
     @summary: wrapper of rsa.transform.int2bytes
     """
