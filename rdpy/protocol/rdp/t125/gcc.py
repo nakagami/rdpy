@@ -448,7 +448,7 @@ class RSAPublicKey(CompositeType):
         self.datalen = UInt32Le(lambda:((self.bitlen.value // 8) - 1))
         self.pubExp = UInt32Le()
         self.modulus = String(readLen = CallableValue(lambda:(self.keylen.value - 8)))
-        self.padding = String("\x00" * 8, readLen = CallableValue(8))
+        self.padding = String(b"\x00" * 8, readLen = CallableValue(8))
 
 class ChannelDef(CompositeType):
     """
