@@ -385,7 +385,9 @@ class ProprietaryServerCertificate(CompositeType):
         @summary: sign proprietary certificate
         @see: http://msdn.microsoft.com/en-us/library/cc240778.aspx
         """
-        self.SignatureBlob.value = rsa.sign(self.computeSignatureHash()[::-1], rsa.PrivateKey(d = ProprietaryServerCertificate._TERMINAL_SERVICES_PRIVATE_EXPONENT_[::-1], n = ProprietaryServerCertificate._TERMINAL_SERVICES_MODULUS_[::-1]))[::-1]
+        d = ProprietaryServerCertificate._TERMINAL_SERVICES_PRIVATE_EXPONENT_[::-1].encode('utf-8')
+        n = ProprietaryServerCertificate._TERMINAL_SERVICES_MODULUS_[::-1].encode('utf-8')
+        self.SignatureBlob.value = rsa.sign(self.computeSignatureHash()[::-1], rsa.PrivateKey(d, n))[::-1]
         
     def verify(self):
         """
