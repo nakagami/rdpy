@@ -280,7 +280,7 @@ def readOctetStream(s, octetStream, minValue = 0):
     for i in range(0, size):
         c = UInt8()
         s.readType(c)
-        if ord(octetStream[i]) != c.value:
+        if octetStream[i] != c.value:
             return False
         
     return True

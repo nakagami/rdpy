@@ -194,7 +194,7 @@ class MCSLayer(LayerAutomata):
         #connection is done
         self.setNextState(self.recvData)
         #try connection on all requested channel
-        for (channelId, layer) in self._channels.iteritems():
+        for (channelId, layer) in self._channels.items():
             #use proxy for each channel
             MCSLayer.MCSProxySender(layer, self, channelId).connect()
     
@@ -236,7 +236,7 @@ class MCSLayer(LayerAutomata):
         per.readLength(data)
         
         #channel id doesn't match a requested layer
-        if not self._channels.has_key(channelId):
+        if channelId not in self._channels:
             log.error("receive data for an unconnected layer")
             return
 

@@ -32,8 +32,8 @@ import rdpy.security.rsa_wrapper as rsa
 
 t124_02_98_oid = ( 0, 0, 20, 124, 0, 1 )
 
-h221_cs_key = "Duca";
-h221_sc_key = "McDn";
+h221_cs_key = b"Duca";
+h221_sc_key = b"McDn";
 
 class MessageType(object):
     """
