@@ -127,10 +127,10 @@ class ProductInformation(CompositeType):
         self.dwVersion = UInt32Le()
         self.cbCompanyName = UInt32Le(lambda:sizeof(self.pbCompanyName))
         #may contain "Microsoft Corporation" from server microsoft
-        self.pbCompanyName = String(b"Microsoft Corporation", readLen = self.cbCompanyName)
+        self.pbCompanyName = String(b"Microsoft Corporation", readLen = self.cbCompanyName, unicode = True)
         self.cbProductId = UInt32Le(lambda:sizeof(self.pbProductId))
         #may contain "A02" from microsoft license server
-        self.pbProductId = String(b"A02", readLen = self.cbProductId)
+        self.pbProductId = String(b"A02", readLen = self.cbProductId, unicode = True)
 
 
 class Scope(CompositeType):
