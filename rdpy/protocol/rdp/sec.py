@@ -310,7 +310,7 @@ class ClientSecurityExchangePDU(CompositeType):
         CompositeType.__init__(self)
         self.length = UInt32Le(lambda:(sizeof(self) - 4))
         self.encryptedClientRandom = String(readLen = CallableValue(lambda:(self.length.value - 8)))
-        self.padding = String("\x00" * 8, readLen = CallableValue(8))
+        self.padding = String(b"\x00" * 8, readLen = CallableValue(8))
         
 class RDPInfo(CompositeType):
     """
@@ -351,7 +351,7 @@ class RDPExtendedInfo(CompositeType):
         self.cbClientDir = UInt16Le(lambda:sizeof(self.clientDir))
         self.clientDir = String(readLen = self.cbClientDir, unicode = True)
         #TODO make tiomezone
-        self.clientTimeZone = String("\x00" * 172)
+        self.clientTimeZone = String(b"\x00" * 172)
         self.clientSessionId = UInt32Le()
         self.performanceFlags = UInt32Le()
 

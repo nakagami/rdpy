@@ -335,12 +335,12 @@ class LicenseManager(object):
         #decrypt server challenge
         #it should be TEST word in unicode format
         serverChallenge = rc4.crypt(rc4.RC4Key(self._licenseKey), serverEncryptedChallenge)
-        if serverChallenge != "T\x00E\x00S\x00T\x00\x00\x00":
+        if serverChallenge != b"T\x00E\x00S\x00T\x00\x00\x00":
             raise InvalidExpectedDataException("bad license server challenge")
         
         #generate hwid
         s = Stream()
-        s.writeType((UInt32Le(2), String(self._hostname + self._username + "\x00" * 16)))
+        s.writeType((UInt32Le(2), String(self._hostname.encode('utf-8') + self._username.encode('utf-8') + b"\x00" * 16)))
         hwid = s.getvalue()[:20]
         
         message = ClientPLatformChallengeResponse()

@@ -182,7 +182,7 @@ class MCSLayer(LayerAutomata):
         @summary: Send disconnect provider ultimatum
         """
         self._transport.send((UInt8(self.writeMCSPDUHeader(DomainMCSPDU.DISCONNECT_PROVIDER_ULTIMATUM, 1)),
-                              per.writeEnumerates(0x80), String("\x00" * 6)))
+                              per.writeEnumerates(0x80), String(b"\x00" * 6)))
         self._transport.close()
         
     def allChannelConnected(self):
