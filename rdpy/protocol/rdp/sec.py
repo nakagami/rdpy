@@ -708,6 +708,10 @@ class Server(SecLayer):
         Wait Confirm Active PDU
         @param s: {Stream}
         """
+        # Client Info PDU
+        # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/772d618e-b7d6-4cd0-b735-fa08af558f9d
+        # TS_SECURITY_HEADER
+        # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/e13405c5-668b-4716-94b2-1c2654ca1ad4
         securityFlag = UInt16Le()
         securityFlagHi = UInt16Le()
         s.readType((securityFlag, securityFlagHi))
