@@ -190,7 +190,7 @@ def macSaltedData(macSaltKey, data, encryptionCount):
     @return: {str} signature
     """
     sha1Digest = sha1()
-    md5Digest = ()
+    md5Digest = md5()
     
     #encode length
     dataLengthS = Stream()
