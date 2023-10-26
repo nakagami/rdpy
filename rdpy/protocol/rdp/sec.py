@@ -655,7 +655,7 @@ class Server(SecLayer):
         """
         @summary: init automata to wait info packet
         """
-        self._enableEncryption = self.getGCCClientSettings().CS_CORE.serverSelectedProtocol == 0
+        self._enableEncryption = self.getGCCClientSettings().CS_CORE.serverSelectedProtocol.value == 0
         if self._enableEncryption:
             self.setNextState(self.recvClientRandom)
         else:
