@@ -76,8 +76,12 @@ class ProxyServer(rdp.RDPServerObserver):
         if self._client is None:
             # try a connection
             domain, username, password = self._controller.getCredentials()
-            self._rss.credentials(username, password,
-                                  domain, self._controller.getHostname())
+            self._rss.credentials(
+                username.encode('utf-8'),
+                password.encode('utf-8'),
+                domain.encode('utf-8'),
+                self._controller.getHostname().encode('utf-8')
+            )
 
             width, height = self._controller.getScreen()
             self._rss.screen(width, height, self._controller.getColorDepth())
