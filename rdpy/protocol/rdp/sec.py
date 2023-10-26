@@ -189,8 +189,8 @@ def macSaltedData(macSaltKey, data, encryptionCount):
     @param encryptionCount: nb encrypted packet
     @return: {str} signature
     """
-    sha1Digest = sha1.new()
-    md5Digest = md5.new()
+    sha1Digest = sha1()
+    md5Digest = ()
     
     #encode length
     dataLengthS = Stream()
@@ -200,7 +200,7 @@ def macSaltedData(macSaltKey, data, encryptionCount):
     encryptionCountS.writeType(UInt32Le(encryptionCount))
     
     sha1Digest.update(macSaltKey)
-    sha1Digest.update("\x36" * 40)
+    sha1Digest.update(b"\x36" * 40)
     sha1Digest.update(dataLengthS.getvalue())
     sha1Digest.update(data)
     sha1Digest.update(encryptionCountS.getvalue())
@@ -208,7 +208,7 @@ def macSaltedData(macSaltKey, data, encryptionCount):
     sha1Sig = sha1Digest.digest()
     
     md5Digest.update(macSaltKey)
-    md5Digest.update("\x5c" * 48)
+    md5Digest.update(b"\x5c" * 48)
     md5Digest.update(sha1Sig)
     
     return md5Digest.digest()
@@ -220,11 +220,11 @@ def tempKey(initialKey, currentKey):
     @param currentKey: {str} key actually used
     @return: {str} temp key
     """
-    sha1Digest = sha1.new()
-    md5Digest = md5.new()
+    sha1Digest = sha1()
+    md5Digest = md5()
     
     sha1Digest.update(initialKey)
-    sha1Digest.update("\x36" * 40)
+    sha1Digest.update(b"\x36" * 40)
     sha1Digest.update(currentKey)
     
     sha1Sig = sha1Digest.digest()
