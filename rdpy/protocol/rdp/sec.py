@@ -152,7 +152,7 @@ def sessionKeyBlob(secret, random1, random2):
     @param clientRandom : client random
     @param serverRandom : server random
     """
-    return saltedHash("X", secret, random1, random2) + saltedHash("YY", secret, random1, random2) + saltedHash("ZZZ", secret, random1, random2)
+    return saltedHash(b"X", secret, random1, random2) + saltedHash(b"YY", secret, random1, random2) + saltedHash(b"ZZZ", secret, random1, random2)
 
 def macData(macSaltKey, data):
     """
@@ -161,22 +161,22 @@ def macData(macSaltKey, data):
     @param data: {str} data to sign
     @return: {str} signature
     """
-    sha1Digest = sha1.new()
-    md5Digest = md5.new()
+    sha1Digest = sha1()
+    md5Digest = md5()
     
     #encode length
     dataLength = Stream()
     dataLength.writeType(UInt32Le(len(data)))
     
     sha1Digest.update(macSaltKey)
-    sha1Digest.update("\x36" * 40)
+    sha1Digest.update(b"\x36" * 40)
     sha1Digest.update(dataLength.getvalue())
     sha1Digest.update(data)
     
     sha1Sig = sha1Digest.digest()
     
     md5Digest.update(macSaltKey)
-    md5Digest.update("\x5c" * 48)
+    md5Digest.update(b"\x5c" * 48)
     md5Digest.update(sha1Sig)
     
     return md5Digest.digest()
