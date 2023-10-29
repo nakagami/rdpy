@@ -205,7 +205,8 @@ class CSSP(protocol.Protocol):
                     main event of received data
         @param data: string data receive from twisted
         """
-        # data: 4.1.1 Client X.224 Connection Request PDU
+        # data: 4.1.2 Client X.224 Connection Request PDU
+        print("CSSP.dataRecievd() 4.1.2", data)
         self._layer.dataReceived(data)
     
     def connectionLost(self, reason):
