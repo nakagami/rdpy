@@ -197,6 +197,8 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
                     main event of received data
         @param data: string data receive from twisted
         """
+        import binascii
+        print("RawLayer.dataReceived()", binascii.hexlify(data))
         #add in buffer
         self._buffer += data
         #while buffer have expected size call local callback
