@@ -38,7 +38,7 @@ from rdpy.core import log, error, rss
 from rdpy.protocol.rdp import rdp
 from twisted.internet import reactor
 
-log._LOG_LEVEL = log.Level.INFO
+log._LOG_LEVEL = log.Level.DEBUG
 
 
 class ProxyServer(rdp.RDPServerObserver):

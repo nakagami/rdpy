@@ -22,6 +22,7 @@
 @see: https://msdn.microsoft.com/en-us/library/cc226764.aspx
 """
 
+import binascii
 from pyasn1.type import namedtype, univ, tag
 import pyasn1.codec.der.encoder as der_encoder
 import pyasn1.codec.der.decoder as der_decoder
@@ -32,6 +33,7 @@ from twisted.internet import protocol
 from OpenSSL import crypto
 from rdpy.security import x509
 from rdpy.core import error
+from rdpy.core import log
 
 class NegoToken(univ.Sequence):
     componentType = namedtype.NamedTypes(
@@ -206,8 +208,7 @@ class CSSP(protocol.Protocol):
         @param data: string data receive from twisted
         """
         # data: 4.1.2 Client X.224 Connection Request PDU
-        import binascii
-        print("CSSP.dataRecievd() 4.1.2", binascii.hexlify(data))
+        log.debug("CSSP.dataRecievd() {binascii.hexlify(data).decode('utf-8')}")
         self._layer.dataReceived(data)
     
     def connectionLost(self, reason):

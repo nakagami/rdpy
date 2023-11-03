@@ -23,6 +23,7 @@ Implement transport PDU layer
 This layer have main goal to negociate SSL transport
 RDP basic security is supported only on client side
 """
+import binascii
 from rdpy.core import log
 
 from rdpy.core.layer import LayerAutomata, IStreamSender
@@ -146,6 +147,7 @@ class X224Layer(LayerAutomata, IStreamSender):
         header = X224DataHeader()
         data.readType(header)
         self._presentation.recv(data)
+        log.debug(f"X224Layer.recvData() {binascii.hexlify(data).decode('utf-8')}")
         
     def send(self, message):
         """
@@ -153,6 +155,7 @@ class X224Layer(LayerAutomata, IStreamSender):
                    Add TPDU header
         @param message: network.Type message
         """
+        log.debug(f"X224Layer.send() {binascii.hexlify(message).decode('utf-8')}")
         self._transport.send((X224DataHeader(), message))
         
 class Client(X224Layer):
@@ -169,6 +172,7 @@ class Client(X224Layer):
         """
         @summary: Connection request for client send a connection request packet
         """
+        log.debug("Client.connect()")
         self.sendConnectionRequest()
         
     def sendConnectionRequest(self):
@@ -177,6 +181,7 @@ class Client(X224Layer):
                     Next state is recvConnectionConfirm
         @see: http://msdn.microsoft.com/en-us/library/cc240500.aspx
         """
+        log.debug("Client.sendConnectRequest()")
         message = ClientConnectionRequestPDU()
         message.protocolNeg.code.value = NegociationType.TYPE_RDP_NEG_REQ
         message.protocolNeg.selectedProtocol.value = self._requestedProtocol
@@ -192,6 +197,7 @@ class Client(X224Layer):
         @see: response -> http://msdn.microsoft.com/en-us/library/cc240506.aspx
         @see: failure ->http://msdn.microsoft.com/en-us/library/cc240507.aspx
         """
+        log.debug("Client.recvConnectionCnfirm()")
         message = ServerConnectionConfirm()
         data.readType(message)
         
@@ -253,6 +259,7 @@ class Server(X224Layer):
         """
         @summary: Connection request for server wait connection request packet from client
         """
+        log.debug("Server.connect()")
         self.setNextState(self.recvConnectionRequest)
         
     def recvConnectionRequest(self, data):
@@ -262,6 +269,7 @@ class Server(X224Layer):
         @param data: {Stream}
         @see : http://msdn.microsoft.com/en-us/library/cc240470.aspx
         """
+        log.debug("Server.recvConnectionRequest()")
         message = ClientConnectionRequestPDU()
         data.readType(message)
         
@@ -296,6 +304,7 @@ class Server(X224Layer):
                     Next state is recvData
         @see : http://msdn.microsoft.com/en-us/library/cc240501.aspx
         """
+        log.debug("Server.sendConnectionConfirm()")
         message = ServerConnectionConfirm()
         message.protocolNeg.code.value = NegociationType.TYPE_RDP_NEG_RSP
         message.protocolNeg.selectedProtocol.value = self._selectedProtocol

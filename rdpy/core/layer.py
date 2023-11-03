@@ -25,6 +25,7 @@ RDPY use Layer Protocol design (like twisted)
 
 import binascii
 from rdpy.core.error import CallPureVirtualFuntion
+from rdpy.core import log
 
 class IStreamListener(object):
     """
@@ -198,7 +199,7 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
                     main event of received data
         @param data: string data receive from twisted
         """
-        print("RawLayer.dataReceived()", self.transport, binascii.hexlify(data))
+        log.debug(f"RawLayer.dataReceived() {self.transport} {binascii.hexlify(data).decode('utf-8')}")
         #add in buffer
         self._buffer += data
         #while buffer have expected size call local callback
@@ -259,5 +260,5 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
         """
         s = Stream()
         s.writeType(message)
-        print("RawLayer.send()", self.transport, binascii.hexlify(s.getvalue()))
+        log.debug(f"RawLayer.send() {self.transport} {binascii.hexlify(s.getvalue()).decode('utf-8')}")
         self.transport.write(s.getvalue())
