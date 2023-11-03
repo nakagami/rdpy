@@ -144,10 +144,10 @@ class X224Layer(LayerAutomata, IStreamSender):
                    And pass to presentation layer
         @param data: Stream
         """
+        log.debug(f"X224Layer.recvData()")
         header = X224DataHeader()
         data.readType(header)
         self._presentation.recv(data)
-        log.debug(f"X224Layer.recvData() {binascii.hexlify(data).decode('utf-8')}")
         
     def send(self, message):
         """
@@ -155,7 +155,7 @@ class X224Layer(LayerAutomata, IStreamSender):
                    Add TPDU header
         @param message: network.Type message
         """
-        log.debug(f"X224Layer.send() {binascii.hexlify(message).decode('utf-8')}")
+        log.debug(f"X224Layer.send()")
         self._transport.send((X224DataHeader(), message))
         
 class Client(X224Layer):
@@ -346,4 +346,3 @@ class ServerTLSContext(ssl.DefaultOpenSSLContextFactory):
                 self.set_options(SSL.OP_TLS_BLOCK_PADDING_BUG)
 
         ssl.DefaultOpenSSLContextFactory.__init__(self, privateKeyFileName, certificateFileName, SSL.SSLv23_METHOD, TPDUSSLContext)
-        
