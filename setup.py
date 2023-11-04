@@ -25,7 +25,6 @@ setup(name='rdpy',
         'rdpy.protocol.rdp.pdu',
         'rdpy.protocol.rdp.nla',
         'rdpy.protocol.rdp.t125',
-        'rdpy.protocol.rfb',
         'rdpy.ui'
     ],
     scripts = [
@@ -34,7 +33,5 @@ setup(name='rdpy',
         'bin/rdpy-rdpmitm.py',
         'bin/rdpy-rdpscreenshot.py',
         'bin/rdpy-rssplayer.py',
-        'bin/rdpy-vncclient.py',
-        'bin/rdpy-vncscreenshot.py'
     ],
 )

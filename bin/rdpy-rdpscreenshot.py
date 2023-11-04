@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (c) 2014-2015 Sylvain Peyrefitte
 #
@@ -27,15 +27,13 @@ import getopt
 import os
 import sys
 
-from PyQt4 import QtCore, QtGui
 from rdpy.protocol.rdp import rdp
-from rdpy.ui.qt4 import RDPBitmapToQtImage
 import rdpy.core.log as log
 from rdpy.core.error import RDPSecurityNegoFail
 from twisted.internet import task
 
 # set log level
-log._LOG_LEVEL = log.Level.INFO
+log._LOG_LEVEL = log.Level.DEBUG
 
 
 class RDPScreenShotFactory(rdp.ClientFactory):
@@ -45,7 +43,7 @@ class RDPScreenShotFactory(rdp.ClientFactory):
     __INSTANCE__ = 0
     __STATE__ = []
 
-    def __init__(self, reactor, app, width, height, path, timeout):
+    def __init__(self, reactor, width, height, path, timeout):
         """
         @param reactor: twisted reactor
         @param width: {integer} width of screen
@@ -55,7 +53,6 @@ class RDPScreenShotFactory(rdp.ClientFactory):
         """
         RDPScreenShotFactory.__INSTANCE__ += 1
         self._reactor = reactor
-        self._app = app
         self._width = width
         self._height = height
         self._path = path
@@ -169,13 +166,6 @@ def main(width, height, path, timeout, hosts):
     @param hosts: {list(str(ip[:port]))}
     @return: {list(tuple(ip, port, Failure instance)} list of connection state
     """
-    #create application
-    app = QtGui.QApplication(sys.argv)
-
-    #add qt4 reactor
-    import qt4reactor
-    qt4reactor.install()
-
     from twisted.internet import reactor
 
     for host in hosts:      
@@ -184,19 +174,18 @@ def main(width, height, path, timeout, hosts):
         else:
             ip, port = host, "3389"
 
-        reactor.connectTCP(ip, int(port), RDPScreenShotFactory(reactor, app, width, height, path + "%s.jpg" % ip, timeout))
+        reactor.connectTCP(ip, int(port), RDPScreenShotFactory(reactor, width, height, path + "%s.jpg" % ip, timeout))
 
-    reactor.runReturn()
-    app.exec_()
+    reactor.run()
     return RDPScreenShotFactory.__STATE__
 
 
 def help():
-    print "Usage: rdpy-rdpscreenshot [options] ip[:port]"
-    print "\t-w: width of screen default value is 1024"
-    print "\t-l: height of screen default value is 800"
-    print "\t-o: file path of screenshot default(/tmp/rdpy-rdpscreenshot.jpg)"
-    print "\t-t: timeout of connection without any updating order (default is 2s)"
+    print("Usage: rdpy-rdpscreenshot [options] ip[:port]")
+    print("\t-w: width of screen default value is 1024")
+    print("\t-l: height of screen default value is 800")
+    print("\t-o: file path of screenshot default(/tmp/rdpy-rdpscreenshot.jpg)")
+    print("\t-t: timeout of connection without any updating order (default is 2s)")
 
 if __name__ == '__main__':
     # default script argument
