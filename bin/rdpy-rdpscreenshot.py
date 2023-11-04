@@ -66,6 +66,7 @@ class RDPScreenShotFactory(rdp.ClientFactory):
         @param connector: twisted connector use for rdp connection (use reconnect to restart connection)
         @param reason: str use to advertise reason of lost connection
         """
+        log.debug("clientConnectionLost()")
         if reason.type == RDPSecurityNegoFail and self._security != "rdp":
             log.info("due to RDPSecurityNegoFail try standard security layer")
             self._security = rdp.SecurityLevel.RDP_LEVEL_RDP
@@ -85,12 +86,12 @@ class RDPScreenShotFactory(rdp.ClientFactory):
         @param connector: twisted connector use for rdp connection (use reconnect to restart connection)
         @param reason: str use to advertise reason of lost connection
         """
-        log.info("connection failed : %s"%reason)
+        log.debug("clientConnectionFailed()")
+        log.info("connection failed : %s" % reason)
         RDPScreenShotFactory.__STATE__.append((connector.host, connector.port, reason))
         RDPScreenShotFactory.__INSTANCE__ -= 1
         if(RDPScreenShotFactory.__INSTANCE__ == 0):
             self._reactor.stop()
-            self._app.exit()
 
     def buildObserver(self, controller, addr):
         """
@@ -122,6 +123,7 @@ class RDPScreenShotFactory(rdp.ClientFactory):
                 """
                 @summary: callback use when bitmap is received 
                 """
+                log.debug("ScreenShotObserver.onUpdate()")
                 image = RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data);
                 with QtGui.QPainter(self._buffer) as qp:
                 # draw image
@@ -134,6 +136,7 @@ class RDPScreenShotFactory(rdp.ClientFactory):
                 """
                 @summary: callback use when RDP stack is connected (just before received bitmap)
                 """
+                log.debug("ScreenShotObserver.onReady()")
                 log.info("connected %s" % addr)
 
             def onSessionReady(self):
@@ -141,16 +144,19 @@ class RDPScreenShotFactory(rdp.ClientFactory):
                 @summary: Windows session is ready
                 @see: rdp.RDPClientObserver.onSessionReady
                 """
+                log.debug("ScreenShotObserver.onSessionReady()")
                 pass
 
             def onClose(self):
                 """
                 @summary: callback use when RDP stack is closed
                 """
+                log.debug("ScreenShotObserver.onClose()")
                 log.info("save screenshot into %s" % self._path)
                 self._buffer.save(self._path)
 
             def checkUpdate(self):
+                log.debug("ScreenShotObserver.checkUpdate()")
                 self._controller.close();
 
         controller.setScreen(self._width, self._height);
