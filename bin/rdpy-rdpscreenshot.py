@@ -113,7 +113,7 @@ class RDPScreenShotFactory(rdp.ClientFactory):
                 @param reactor: twisted reactor
                 """
                 rdp.RDPClientObserver.__init__(self, controller)
-                self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
+                self._buffer = None
                 self._path = path
                 self._timeout = timeout
                 self._startTimeout = False
