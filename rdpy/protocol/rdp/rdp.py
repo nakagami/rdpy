@@ -42,6 +42,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
     Manage RDP stack as client
     """
     def __init__(self):
+        log.debug("RDPClientController.__init__()")
         #list of observer
         self._clientObserver = []
         #PDU layer
@@ -65,24 +66,29 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @return: return Protocol layer for twisted
         In case of RDP TPKT is the Raw layer
         """
+        log.debug("RDPClientController.getProtocol()")
+
         return cssp.CSSP(self._tpktLayer, ntlm.NTLMv2(self._secLayer._info.domain.value, self._secLayer._info.userName.value, self._secLayer._info.password.value))
     
     def getColorDepth(self):
         """
         @return: color depth set by the server (15, 16, 24)
         """
+        log.debug("RDPClientController.getColorDepth()")
         return self._pduLayer._serverCapabilities[pdu.caps.CapsType.CAPSTYPE_BITMAP].capability.preferredBitsPerPixel.value
     
     def getKeyEventUniCodeSupport(self):
         """
         @return: True if server support unicode input
         """
+        log.debug("RDPClientController.getKeyEventUniCodeSupport()")
         return self._pduLayer._serverCapabilities[pdu.caps.CapsType.CAPSTYPE_INPUT].capability.inputFlags.value & pdu.caps.InputFlags.INPUT_FLAG_UNICODE
         
     def setPerformanceSession(self):
         """
         @summary: Set particular flag in RDP stack to avoid wall-paper, theme, menu animation etc...
         """
+        log.debug("RDPClientController.setPerformanceSession()")
         self._secLayer._info.extendedInfo.performanceFlags.value = sec.PerfFlag.PERF_DISABLE_WALLPAPER | sec.PerfFlag.PERF_DISABLE_MENUANIMATIONS | sec.PerfFlag.PERF_DISABLE_CURSOR_SHADOW | sec.PerfFlag.PERF_DISABLE_THEMING | sec.PerfFlag.PERF_DISABLE_FULLWINDOWDRAG
         
     def setScreen(self, width, height):
@@ -91,6 +97,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @param width: width in pixel of screen
         @param height: height in pixel of screen
         """
+        log.debug(f"RDPClientController.setScreen({width}, {height})")
         #set screen definition in MCS layer
         self._mcsLayer._clientSettings.getBlock(gcc.MessageType.CS_CORE).desktopHeight.value = height
         self._mcsLayer._clientSettings.getBlock(gcc.MessageType.CS_CORE).desktopWidth.value = width
@@ -101,6 +108,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @param username: {string} username of session
         """
         #username in PDU info packet
+        log.debug(f"RDPClientController.setUsername({username}")
         self._secLayer._info.userName.value = username
         self._secLayer._licenceManager._username = username
         
@@ -109,6 +117,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: Set password for session
         @param password: {string} password of session
         """
+        log.debug(f"RDPClientController.setPassword({password})")
         self.setAutologon()
         self._secLayer._info.password.value = password
         
@@ -117,12 +126,14 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: Set the windows domain of session
         @param domain: {string} domain of session
         """
+        log.debug(f"RDPClientController.setDomain({domain})")
         self._secLayer._info.domain.value = domain
         
     def setAutologon(self):
         """
         @summary: enable autologon
         """
+        log.debug("RDPClientController.setAutologon()")
         self._secLayer._info.flag |= sec.InfoFlag.INFO_AUTOLOGON
         
     def setAlternateShell(self, appName):
@@ -130,6 +141,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: set application name of app which start at the begining of session
         @param appName: {string} application name
         """
+        log.debug("RDPClientController.setAlternateShell()")
         self._secLayer._info.alternateShell.value = appName
         
     def setKeyboardLayout(self, layout):
@@ -137,6 +149,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: keyboard layout
         @param layout: us | fr
         """
+        log.debug(f"RDPClientController.setKeyboardLayout({layout})")
         if layout == "fr":
             self._mcsLayer._clientSettings.CS_CORE.kbdLayout.value = gcc.KeyboardLayout.FRENCH
         elif layout == "us":
@@ -146,6 +159,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         """
         @summary: set hostname of machine
         """
+        log.debug(f"RDPClientController.setHostname({hostname})")
         self._mcsLayer._clientSettings.CS_CORE.clientName.value = hostname[:15] + "\x00" * (15 - len(hostname))
         self._secLayer._licenceManager._hostname = hostname
         
@@ -154,6 +168,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: Request basic security
         @param level: {SecurityLevel}
         """
+        log.debug(f"RDPClientController.setSecurityLevel({level})")
         if level == SecurityLevel.RDP_LEVEL_RDP:
             self._x224Layer._requestedProtocol = x224.Protocols.PROTOCOL_RDP
         elif level == SecurityLevel.RDP_LEVEL_SSL:
@@ -166,6 +181,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: Add observer to RDP protocol
         @param observer: new observer to add
         """
+        log.debug("RDPClientController.addClientObserver()")
         self._clientObserver.append(observer)
         
     def removeClientObserver(self, observer):
@@ -173,6 +189,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: Remove observer to RDP protocol stack
         @param observer: observer to remove
         """
+        log.debug("RDPClientController.removeClientObserver()")
         for i in range(0, len(self._clientObserver)):
             if self._clientObserver[i] == observer:
                 del self._clientObserver[i]
@@ -183,6 +200,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @summary: Call when a bitmap data is received from update PDU
         @param rectangles: [pdu.BitmapData] struct
         """
+        log.debug(f"RDPClientController.onUpdate()")
         for observer in self._clientObserver:
             #for each rectangle in update PDU
             for rectangle in rectangles:
@@ -192,6 +210,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         """
         @summary: Call when PDU layer is connected
         """
+        log.debug(f"RDPClientController.onReady()")
         self._isReady = True
         #signal all listener
         for observer in self._clientObserver:
@@ -201,6 +220,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         """
         @summary: Call when Windows session is ready (connected)
         """
+        log.debug(f"RDPClientController.onSessionReady()")
         self._isReady = True
         #signal all listener
         for observer in self._clientObserver:
@@ -210,6 +230,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         """
         @summary: Event call when RDP stack is closed
         """
+        log.debug(f"RDPClientController.onClose()")
         self._isReady = False
         for observer in self._clientObserver:
             observer.onClose()
@@ -225,6 +246,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         if not self._isReady:
             return
 
+        log.debug(f"RDPClientController.sendPointerEvent()")
         try:
             if button == 4 or button == 5:
                 event = pdu.data.PointerExEvent()
@@ -272,6 +294,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         if not self._isReady:
             return
 
+        log.debug(f"RDPClientController.sendWheelEvent()")
         try:
             event = pdu.data.PointerEvent()
             if isHorizontal:
@@ -304,6 +327,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         if not self._isReady:
             return
         
+        log.debug(f"RDPClientController.sendKeyEventScancode()")
         try:
             event = pdu.data.ScancodeKeyEvent()
             event.keyCode.value = code
@@ -328,6 +352,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         if not self._isReady:
             return
         
+        log.debug(f"RDPClientController.sendKeyEventUnicode()")
         try:
             event = pdu.data.UnicodeKeyEvent()
             event.unicode.value = code
@@ -348,6 +373,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         @param right: right coordinate
         @param bottom: bottom coordinate
         """
+        log.debug(f"RDPClientController.sendRefreshOrder()")
         refreshPDU = pdu.data.RefreshRectPDU()
         rect = pdu.data.InclusiveRectangle()
         rect.left.value = left
@@ -361,6 +387,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         """
         @summary: Close protocol stack
         """
+        log.debug(f"RDPClientController.close()")
         self._pduLayer.close()
 
 class RDPServerController(pdu.layer.PDUServerListener):
