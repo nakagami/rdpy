@@ -23,14 +23,14 @@ example of use rdpy as rdp client
 
 import sys, os, getopt, socket
 
-from PyQt4 import QtGui, QtCore
-from rdpy.ui.qt4 import RDPClientQt
+#from PyQt4 import QtGui, QtCore
+#from rdpy.ui.qt4 import RDPClientQt
 from rdpy.protocol.rdp import rdp
 from rdpy.core.error import RDPSecurityNegoFail
 from rdpy.core import rss
 
 import rdpy.core.log as log
-log._LOG_LEVEL = log.Level.INFO
+log._LOG_LEVEL = log.Level.DEBUG
 
 
 class RDPClientQtRecorder(RDPClientQt):
@@ -211,7 +211,7 @@ def autoDetectKeyboardLayout():
     return "en"
         
 def help():
-    print """
+    print ("""
     Usage: rdpy-rdpclient [options] ip[:port]"
     \t-u: user name
     \t-p: password
@@ -222,7 +222,7 @@ def help():
     \t-k: keyboard layout [en|fr] [default : en]
     \t-o: optimized session (disable costly effect) [default : False]
     \t-r: rss_filepath Recorded Session Scenario [default : None]
-    """
+    """)
         
 if __name__ == '__main__':
     
