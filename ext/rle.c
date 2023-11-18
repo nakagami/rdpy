@@ -939,7 +939,7 @@ static PyMethodDef rle_methods[] =
      {NULL, NULL, 0, NULL}
 };
 
-static struct PyModuleDef cModPyRle =
+static struct PyModuleDef cModRle =
 {
     PyModuleDef_HEAD_INIT,
     "bitmap_decompress",
@@ -949,7 +949,7 @@ static struct PyModuleDef cModPyRle =
 };
  
  
-PyMODINIT_FUNC PyInit_cModPyRle(void)
+PyMODINIT_FUNC PyInit_rle(void)
 {
-    return PyModule_Create(&cModPyRle);
+    return PyModule_Create(&cModRle);
 }
