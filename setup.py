@@ -27,6 +27,7 @@ setup(name='rdpy',
         'rdpy.protocol.rdp.t125',
         'rdpy.ui'
     ],
+    ext_modules=[Extension('rle', ['ext/rle.c'])],
     scripts = [
         'bin/rdpy-rdpclient.py',
         'bin/rdpy-rdphoneypot.py',

@@ -24,7 +24,7 @@ example of use rdpy as rdp client
 import sys, os, getopt, socket
 
 #from PyQt4 import QtGui, QtCore
-#from rdpy.ui.qt4 import RDPClientQt
+from rdpy.ui.tk import RDPClient
 from rdpy.protocol.rdp import rdp
 from rdpy.core.error import RDPSecurityNegoFail
 from rdpy.core import rss
@@ -33,7 +33,7 @@ import rdpy.core.log as log
 log._LOG_LEVEL = log.Level.DEBUG
 
 
-class RDPClientQtRecorder(RDPClientQt):
+class RDPClientQtRecorder(RDPClient):
     """
     @summary: Widget with record session
     """
