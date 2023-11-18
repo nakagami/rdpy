@@ -25,7 +25,6 @@ setup(name='rdpy',
         'rdpy.protocol.rdp.pdu',
         'rdpy.protocol.rdp.nla',
         'rdpy.protocol.rdp.t125',
-        'rdpy.protocol.rfb',
         'rdpy.ui'
     ],
     scripts = [
