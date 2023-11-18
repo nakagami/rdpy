@@ -33,6 +33,5 @@ setup(name='rdpy',
         'bin/rdpy-rdpmitm.py',
         'bin/rdpy-rdpscreenshot.py',
         'bin/rdpy-rssplayer.py',
-        'bin/rdpy-vncscreenshot.py'
     ],
 )
