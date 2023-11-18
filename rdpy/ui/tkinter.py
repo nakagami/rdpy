@@ -24,7 +24,6 @@ QRemoteDesktop is a widget use for render in rdpy
 """
 
 from PyQt4 import QtGui, QtCore
-from rdpy.protocol.rfb.rfb import RFBClientObserver
 from rdpy.protocol.rdp.rdp import RDPClientObserver
 from rdpy.core.error import CallPureVirtualFuntion
 import sys
@@ -67,118 +66,6 @@ class QAdaptor(object):
         """ 
         raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "closeEvent", "QAdaptor"))
     
-def qtImageFormatFromRFBPixelFormat(pixelFormat):
-    """
-    @summary: convert RFB pixel format to QtGui.QImage format
-    """
-    if pixelFormat.BitsPerPixel.value == 32:
-        return QtGui.QImage.Format_RGB32
-    elif pixelFormat.BitsPerPixel.value == 16:
-        return QtGui.QImage.Format_RGB16
-
-class RFBClientQt(RFBClientObserver, QAdaptor):
-    """
-    @summary: QAdaptor for specific RFB protocol stack
-    is to an RFB observer 
-    """   
-    def __init__(self, controller):
-        """
-        @param controller: controller for observer
-        @param width: width of widget
-        @param height: height of widget
-        """
-        RFBClientObserver.__init__(self, controller)
-        self._widget = QRemoteDesktop(1024, 800, self)
-        
-    def getWidget(self):
-        """
-        @return: widget use for render
-        """
-        return self._widget
-    
-    def onUpdate(self, width, height, x, y, pixelFormat, encoding, data):
-        """
-        @summary: Implement RFBClientObserver interface
-        @param width: width of new image
-        @param height: height of new image
-        @param x: x position of new image
-        @param y: y position of new image
-        @param pixelFormat: pixefFormat structure in rfb.message.PixelFormat
-        @param encoding: encoding type rfb.message.Encoding
-        @param data: image data in accordance with pixel format and encoding
-        """
-        imageFormat = qtImageFormatFromRFBPixelFormat(pixelFormat)
-        if imageFormat is None:
-            log.error("Receive image in bad format")
-            return
- 
-        image = QtGui.QImage(data, width, height, imageFormat)
-        self._widget.notifyImage(x, y, image, width, height)
-        
-    def onCutText(self, text):
-        """
-        @summary: event when server send cut text event
-        @param text: text received
-        """
-    
-    def onBell(self):
-        """
-        @summary: event when server send biiip
-        """
-    
-    def onReady(self):
-        """
-        @summary: Event when network stack is ready to receive or send event
-        """
-        (width, height) = self._controller.getScreen()
-        self._widget.resize(width, height)
-        
-    def sendMouseEvent(self, e, isPressed):
-        """
-        @summary: Convert Qt mouse event to RFB mouse event
-        @param e: qMouseEvent
-        @param isPressed: event come from press or release action
-        """
-        button = e.button()
-        buttonNumber = 0
-        if button == QtCore.Qt.LeftButton:
-            buttonNumber = 1
-        elif button == QtCore.Qt.MidButton:
-            buttonNumber = 2
-        elif button == QtCore.Qt.RightButton:
-            buttonNumber = 3  
-        self.mouseEvent(buttonNumber, e.pos().x(), e.pos().y())
-        
-    def sendKeyEvent(self, e, isPressed):
-        """
-        @summary: Convert Qt key press event to RFB press event
-        @param e: qKeyEvent
-        @param isPressed: event come from press or release action
-        """
-        self.keyEvent(isPressed, e.nativeVirtualKey())
-        
-    def sendWheelEvent(self, e):
-        """
-        @summary: Convert Qt wheel event to RFB Wheel event
-        @param e: QKeyEvent
-        @param isPressed: event come from press or release action
-        """
-        pass
-        
-    def closeEvent(self, e):
-        """
-        @summary: Call when you want to close connection
-        @param: QCloseEvent
-        """ 
-        self._controller.close()
-        
-    def onClose(self):
-        """
-        @summary: Call when stack is close
-        """
-        #do something maybe a message
-        pass
-
 def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
     """
     @summary: Bitmap transformation to Qt object
