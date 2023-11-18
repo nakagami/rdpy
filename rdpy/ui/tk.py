@@ -18,12 +18,11 @@
 #
 
 """
-Qt specific code
+GUI Toolkit specific code
 
 QRemoteDesktop is a widget use for render in rdpy
 """
 
-from PyQt4 import QtGui, QtCore
 from rdpy.protocol.rdp.rdp import RDPClientObserver
 from rdpy.core.error import CallPureVirtualFuntion
 import sys
@@ -114,7 +113,7 @@ def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
         image = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
     return image
   
-class RDPClientQt(RDPClientObserver, EventAdaptor):
+class RDPClient(RDPClientObserver, EventAdaptor):
     """
     @summary: Adaptor for RDP client
     """
@@ -217,7 +216,7 @@ class RDPClientQt(RDPClientObserver, EventAdaptor):
         #do something maybe a message
 
         
-class QRemoteDesktop(QtGui.QWidget):
+class RemoteDesktop:
     """
     @summary: Qt display widget
     """
