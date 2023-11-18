@@ -31,7 +31,7 @@ import sys
 import rdpy.core.log as log
 import rle
 
-class QAdaptor(object):
+class EventAdaptor(object):
     """
     @summary:  Adaptor model with link between protocol
                 And Qt widget 
@@ -42,7 +42,7 @@ class QAdaptor(object):
         @param e: QMouseEvent
         @param isPressed: event come from press or release action
         """
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendMouseEvent", "QAdaptor")) 
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendMouseEvent", "EventAdaptor")) 
         
     def sendKeyEvent(self, e, isPressed):
         """
@@ -50,21 +50,21 @@ class QAdaptor(object):
         @param e: QEvent
         @param isPressed: event come from press or release action
         """
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendKeyEvent", "QAdaptor"))
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendKeyEvent", "EventAdaptor"))
      
     def sendWheelEvent(self, e):
         """
         @summary: Interface to send wheel event to protocol stack
         @param e: QWheelEvent
         """
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendWheelEvent", "QAdaptor")) 
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendWheelEvent", "EventAdaptor")) 
     
     def closeEvent(self, e):
         """
         @summary: Call when you want to close connection
         @param: QCloseEvent
         """ 
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "closeEvent", "QAdaptor"))
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "closeEvent", "EventAdaptor"))
     
 def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
     """
@@ -114,7 +114,7 @@ def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
         image = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
     return image
   
-class RDPClientQt(RDPClientObserver, QAdaptor):
+class RDPClientQt(RDPClientObserver, EventAdaptor):
     """
     @summary: Adaptor for RDP client
     """
@@ -223,7 +223,7 @@ class QRemoteDesktop(QtGui.QWidget):
     """
     def __init__(self, width, height, adaptor):
         """
-        @param adaptor: {QAdaptor}
+        @param adaptor: {EventAdaptor}
         @param width: {int} width of widget
         @param height: {int} height of widget
         """
@@ -239,7 +239,7 @@ class QRemoteDesktop(QtGui.QWidget):
     
     def notifyImage(self, x, y, qimage, width, height):
         """
-        @summary: Function call from QAdaptor
+        @summary: Function call from EventAdaptor
         @param x: x position of new image
         @param y: y position of new image
         @param qimage: new QImage
