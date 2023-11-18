@@ -20,8 +20,13 @@
 """
 Fake widget
 """
+from enum import Enum
 from rdpy.core.error import CallPureVirtualFuntion
-from PyQt4 import QtGui, QtCore
+
+
+class Color(Enum):
+    BLACK = 0
+    WHITE = 1
 
 
 class KeyCode(object):
@@ -107,7 +112,7 @@ class List(IView):
     """
     List widget simulate by QT painter
     """
-    def __init__(self, labels, width, height, callback, backgroudColor = QtCore.Qt.black):
+    def __init__(self, labels, width, height, callback, backgroudColor = Color.BLACK):
         self._labels = labels
         self._width = width
         self._height = height
@@ -143,23 +148,10 @@ class List(IView):
         self._needUpdate = False
         
         i = 0
-        drawArea = QtGui.QImage(self._width, self._height, render.getImageFormat())
-        #fill with background Color
-        drawArea.fill(self._backgroudColor)
-        with QtGui.QPainter(drawArea) as qp:
-            for label in self._labels:
-                rect = QtCore.QRect(0, i * self._cellHeight, self._width - 2, self._cellHeight)
-                if i == self._current:
-                    qp.setPen(QtCore.Qt.darkGreen)
-                    qp.drawRoundedRect(rect, 5.0, 5.0)
-                qp.setPen(QtCore.Qt.white)  
-                qp.setFont(QtGui.QFont('arial', self._fontSize, QtGui.QFont.Bold))
-                qp.drawText(rect, QtCore.Qt.AlignCenter, label)
-                i += 1
-        render.drawImage(drawArea)
-        
+        raise NotImplementedError("List.update")
+
 class Window(IView):
-    def __init__(self, width, height, backgroundColor = QtCore.Qt.black):
+    def __init__(self, width, height, backgroundColor = Color.BLACK):
         self._views = []
         self._focusIndex = 0
         self._width = width
@@ -176,6 +168,7 @@ class Window(IView):
         if self._focusIndex < len(self._views):
             self._views[self._focusIndex].pointerEvent(x, y, button)
     def update(self, render, force = False):
+        raise NotImplementedError("Window.update")
         drawArea = QtGui.QImage(self._width, self._height, render.getImageFormat())
         #fill with background Color
         if force:
@@ -185,7 +178,7 @@ class Window(IView):
             view.update(render, force)
             
 class Label(IView):
-    def __init__(self, label, width, height, font = QtGui.QFont(), fontColor = QtCore.Qt.white, backgroundColor = QtCore.Qt.black):
+    def __init__(self, label, width, height, font = None, fontColor = Color.WHITE, backgroundColor = Color.BLACK):
         self._label = label
         self._width = width
         self._height = height
@@ -213,13 +206,8 @@ class Label(IView):
         """
         if not force:
             return;
-        drawArea = QtGui.QImage(self._width, self._height, render.getImageFormat())
-        drawArea.fill(self._backgroundColor)
-        with QtGui.QPainter(drawArea) as qp:
-            qp.setFont(self._font)
-            qp.setPen(self._fontColor) 
-            qp.drawText(drawArea.rect(), QtCore.Qt.AlignCenter, self._label)
-        render.drawImage(drawArea)
+        raise NotImprementedError("Label.update()")
+
 
 class RDPRenderer(IRender):
     def __init__(self, controller):
@@ -232,6 +220,8 @@ class RDPRenderer(IRender):
         self._dy = 0
         
     def getImageFormat(self):
+        raise NotImplementedError("RDPRenderer.getImageFormat")
+
         if self._colorDepth == 15:
             return QtGui.QImage.Format_RGB15
         elif self._colorDepth == 16:
