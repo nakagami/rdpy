@@ -33,7 +33,7 @@ import rdpy.core.log as log
 log._LOG_LEVEL = log.Level.DEBUG
 
 
-class RDPClientQtRecorder(RDPClient):
+class RDPClientRecorder(RDPClient):
     """
     @summary: Widget with record session
     """
@@ -134,9 +134,9 @@ class RDPClientQtFactory(rdp.ClientFactory):
         """
         #create client observer
         if self._recodedPath is None:
-            self._client = RDPClientQt(controller, self._width, self._height)
+            self._client = RDPClient(controller, self._width, self._height)
         else:
-            self._client = RDPClientQtRecorder(controller, self._width, self._height, rss.createRecorder(self._recodedPath))
+            self._client = RDPClientRecorder(controller, self._width, self._height, rss.createRecorder(self._recodedPath))
         #create qt widget
         self._w = self._client.getWidget()
         self._w.setWindowTitle('rdpy-rdpclient')
