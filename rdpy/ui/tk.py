@@ -124,7 +124,7 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         @param height: {int} height of widget
         """
         RDPClientObserver.__init__(self, controller)
-        self._widget = QRemoteDesktop(width, height, self)
+        #self._widget = QRemoteDesktop(width, height, self)
         #set widget screen to RDP stack
         controller.setScreen(width, height)
         
@@ -132,7 +132,8 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         """
         @return: widget use for render
         """
-        return self._widget
+        #return self._widget
+        return None
     
     def sendMouseEvent(self, e, isPressed):
         """

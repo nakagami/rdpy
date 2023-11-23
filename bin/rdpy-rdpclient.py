@@ -139,11 +139,11 @@ class RDPClientQtFactory(rdp.ClientFactory):
             self._client = RDPClientRecorder(controller, self._width, self._height, rss.createRecorder(self._recodedPath))
         #create qt widget
         self._w = self._client.getWidget()
-        self._w.setWindowTitle('rdpy-rdpclient')
-        if self._fullscreen:
-            self._w.showFullScreen()
-        else:
-            self._w.show()
+        #self._w.setWindowTitle('rdpy-rdpclient')
+        #if self._fullscreen:
+        #    self._w.showFullScreen()
+        #else:
+        #    self._w.show()
         
         controller.setUsername(self._username)
         controller.setPassword(self._passwod)
@@ -174,7 +174,7 @@ class RDPClientQtFactory(rdp.ClientFactory):
         
         log.info("Lost connection : %s"%reason)
         reactor.stop()
-        app.exit()
+        os._exit(0)
         
     def clientConnectionFailed(self, connector, reason):
         """
