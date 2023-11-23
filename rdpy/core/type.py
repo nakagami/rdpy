@@ -838,7 +838,7 @@ def encodeUnicode(s):
     @param s: str python
     @return: unicode string
     """
-    return s.decode("utf-16-le") + "\x00\x00"
+    return s.encode("utf-16-le") + b"\x00\x00"
 
 def decodeUnicode(s):
     """
