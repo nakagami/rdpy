@@ -271,7 +271,7 @@ class CSSP(protocol.Protocol):
         #convert from der to ber...
 
         # DELETE ME
-        https://stackoverflow.com/questions/18806962/simple-der-cert-parsing-in-python
+        # https://stackoverflow.com/questions/18806962/simple-der-cert-parsing-in-python
         log.debug("CSSP.recvChallenge() 1")
         pubKeyPEM = crypto.dump_publickey(crypto.FILETYPE_PEM, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
         log.debug(pubKeyPEM)
