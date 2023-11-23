@@ -539,7 +539,7 @@ class NTLMv2(sspi.IAuthenticationProtocol):
         computeMIC = False
         ServerName = self._challengeMessage.getTargetInfo()
         infos = self._challengeMessage.getTargetInfoAsAvPairArray()
-        if infos.has_key(AvId.MsvAvTimestamp):
+        if AvId.MsvAvTimestamp in infos:
             Timestamp = infos[AvId.MsvAvTimestamp]
             computeMIC = True
         else:
@@ -555,7 +555,7 @@ class NTLMv2(sspi.IAuthenticationProtocol):
         if self._challengeMessage.NegotiateFlags.value & Negotiate.NTLMSSP_NEGOTIATE_UNICODE:
             self._enableUnicode = True
             domain, user = UNICODE(domain), UNICODE(user)
-        self._authenticateMessage = createAuthenticationMessage(self._challengeMessage.NegotiateFlags.value, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, "")
+        self._authenticateMessage = createAuthenticationMessage(self._challengeMessage.NegotiateFlags.value, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, b"")
         
         if computeMIC:
             self._authenticateMessage.MIC.value = MIC(ExportedSessionKey, self._negotiateMessage, self._challengeMessage, self._authenticateMessage)

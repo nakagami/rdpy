@@ -264,11 +264,20 @@ class CSSP(protocol.Protocol):
         @summary: second state in cssp automata
         @param data : {str} all data available on buffer
         """
-        log.debug("CSSP.recvChallenge")
+        log.debug("CSSP.recvChallenge()")
         request = decodeDERTRequest(data)
         message, self._interface = self._authenticationProtocol.getAuthenticateMessage(getNegoTokens(request)[0])
         #get back public key
         #convert from der to ber...
+
+        log.debug("CSSP.recvChallenge1()")
+        print(self.transport.protocol._tlsConnection.get_peer_certificate())
+        log.debug("CSSP.recvChallenge2()")
+        print(self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
+        log.debug("CSSP.recvChallenge3()")
+        print(crypto.dump_privatekey(crypto.FILETYPE_ASN1, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()))
+        log.debug("CSSP.recvChallenge4()")
+
         pubKeyDer = crypto.dump_privatekey(crypto.FILETYPE_ASN1, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
         pubKey = der_decoder.decode(pubKeyDer, asn1Spec=OpenSSLRSAPublicKey())[0]
         
