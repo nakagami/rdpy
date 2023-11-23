@@ -270,13 +270,19 @@ class CSSP(protocol.Protocol):
         #get back public key
         #convert from der to ber...
 
-        log.debug("CSSP.recvChallenge1()")
-        print(self.transport.protocol._tlsConnection.get_peer_certificate())
-        log.debug("CSSP.recvChallenge2()")
-        print(self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
-        log.debug("CSSP.recvChallenge3()")
-        print(crypto.dump_privatekey(crypto.FILETYPE_ASN1, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()))
-        log.debug("CSSP.recvChallenge4()")
+        # DELETE ME
+        https://stackoverflow.com/questions/18806962/simple-der-cert-parsing-in-python
+        log.debug("CSSP.recvChallenge() 1")
+        pubKeyPEM = crypto.dump_publickey(crypto.FILETYPE_PEM, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
+        log.debug(pubKeyPEM)
+        log.debug("CSSP.recvChallenge() 2")
+        pubKeyDer = crypto.dump_publickey(crypto.FILETYPE_ASN1, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
+        print(pubKeyDer)
+        log.debug("CSSP.recvChallenge() 3")
+        pubKey = der_decoder.decode(pubKeyDer, asn1Spec=OpenSSLRSAPublicKey())[0]
+        print(pubKey)
+        log.debug("CSSP.recvChallenge() 4")
+        # DELETE ME
 
         pubKeyDer = crypto.dump_privatekey(crypto.FILETYPE_ASN1, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
         pubKey = der_decoder.decode(pubKeyDer, asn1Spec=OpenSSLRSAPublicKey())[0]
