@@ -187,6 +187,7 @@ class CSSP(protocol.Protocol):
         @param layer: {type.Layer.RawLayer}
         @param authenticationProtocol: {sspi.IAuthenticationProtocol}
         """
+        log.debug(f"CSSP.__init__({layer}, {authenticationProtocol})")
         self._layer = layer
         self._authenticationProtocol = authenticationProtocol
         #IGenericSecurityService
@@ -199,6 +200,7 @@ class CSSP(protocol.Protocol):
         @summary: Call by RawLayer Factory
         @param param: RawLayerClientFactory or RawLayerFactory
         """
+        log.debug(f"CSSP.setFactory({factory})")
         self._layer.setFactory(factory)
         
     def dataReceived(self, data):
@@ -216,7 +218,7 @@ class CSSP(protocol.Protocol):
         @summary: Call from twisted engine when protocol is closed
         @param reason: str represent reason of close connection
         """
-        log.debug("CSSP.connectionLost")
+        log.debug("CSSP.connectionLost()")
         self._layer._factory.connectionLost(self, reason)
             
     def connectionMade(self):
@@ -239,7 +241,7 @@ class CSSP(protocol.Protocol):
         @summary: start TLS protocol
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         """
-        log.debug("CSSP.startTLS")
+        log.debug("CSSP.startTLS()")
         self.transport.startTLS(sslContext)
         
     def startNLA(self, sslContext, callback = None):
@@ -248,7 +250,7 @@ class CSSP(protocol.Protocol):
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         @param callback: {function} function call when cssp layer is read
         """
-        log.debug("CSSP.startNLA")
+        log.debug("CSSP.startNLA()")
         self._callback = callback
         self.startTLS(sslContext)
         #send negotiate message
