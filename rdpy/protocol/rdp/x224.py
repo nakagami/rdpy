@@ -237,9 +237,6 @@ class Client(X224Layer):
             log.info("*" * 43)
             log.info("*" + " " * 10  + "NLA Security selected" + " " * 10 + "*")
             log.info("*" * 43)
-            log.debug("Client.recvConnectionConfirm() 1")
-            log.debug(self._presentation.connect())     # DELETE ME
-            log.debug("Client.recvConnectionConfirm() 2")
             self._transport.startNLA(ClientTLSContext(), lambda:self._presentation.connect())
 
 class Server(X224Layer):

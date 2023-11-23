@@ -455,7 +455,7 @@ class ChannelDef(CompositeType):
     def __init__(self, name = "", options = 0):
         CompositeType.__init__(self)
         #name of channel
-        self.name = String(name[0:8] + "\x00" * (8 - len(name)), readLen = CallableValue(8))
+        self.name = String(name[0:8] + b"\x00" * (8 - len(name)), readLen = CallableValue(8))
         #unknown
         self.options = UInt32Le()
         

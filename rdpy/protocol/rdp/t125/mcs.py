@@ -439,7 +439,7 @@ class Client(MCSLayer):
         ccReqStream = Stream()
         ccReqStream.writeType(ccReq)
         
-        tmp = (ber.writeOctetstring("\x01"), ber.writeOctetstring("\x01"), ber.writeBoolean(True),
+        tmp = (ber.writeOctetstring(b"\x01"), ber.writeOctetstring(b"\x01"), ber.writeBoolean(True),
                self.writeDomainParams(34, 2, 0, 0xffff),
                self.writeDomainParams(1, 1, 1, 0x420),
                self.writeDomainParams(0xffff, 0xfc17, 0xffff, 0xffff),
