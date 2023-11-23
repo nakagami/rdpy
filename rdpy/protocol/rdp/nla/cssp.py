@@ -216,6 +216,7 @@ class CSSP(protocol.Protocol):
         @summary: Call from twisted engine when protocol is closed
         @param reason: str represent reason of close connection
         """
+        log.debug("CSSP.connectionLost")
         self._layer._factory.connectionLost(self, reason)
             
     def connectionMade(self):
@@ -238,6 +239,7 @@ class CSSP(protocol.Protocol):
         @summary: start TLS protocol
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         """
+        log.debug("CSSP.startTLS")
         self.transport.startTLS(sslContext)
         
     def startNLA(self, sslContext, callback = None):
@@ -246,6 +248,7 @@ class CSSP(protocol.Protocol):
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         @param callback: {function} function call when cssp layer is read
         """
+        log.debug("CSSP.startNLA")
         self._callback = callback
         self.startTLS(sslContext)
         #send negotiate message
@@ -258,6 +261,7 @@ class CSSP(protocol.Protocol):
         @summary: second state in cssp automata
         @param data : {str} all data available on buffer
         """
+        log.debug("CSSP.recvChallenge")
         request = decodeDERTRequest(data)
         message, self._interface = self._authenticationProtocol.getAuthenticateMessage(getNegoTokens(request)[0])
         #get back public key
@@ -280,6 +284,7 @@ class CSSP(protocol.Protocol):
         @summary: the server send the pubKeyBer + 1
         @param data : {str} all data available on buffer
         """
+        log.debug("CSSP.recvPubKeyInc")
         request = decodeDERTRequest(data)
         pubKeyInc = self._interface.GSS_UnWrapEx(getPubKeyAuth(request))
         #check pubKeyInc = self._pubKeyBer + 1
