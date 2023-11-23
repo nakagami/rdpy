@@ -87,7 +87,7 @@ class RDPClientRecorder(RDPClient):
         self._rssRecorder.close()
         RDPClientQt.closeEvent(self, e)
 
-class RDPClientQtFactory(rdp.ClientFactory):
+class RDPClientFactory(rdp.ClientFactory):
     """
     @summary: Factory create a RDP GUI client
     """
@@ -283,6 +283,6 @@ if __name__ == '__main__':
     log.info("keyboard layout set to %s"%keyboardLayout)
     
     from twisted.internet import reactor
-    reactor.connectTCP(ip, int(port), RDPClientQtFactory(width, height, username, password, domain, fullscreen, keyboardLayout, optimized, "nego", recodedPath))
+    reactor.connectTCP(ip, int(port), RDPClientFactory(width, height, username, password, domain, fullscreen, keyboardLayout, optimized, "nego", recodedPath))
     reactor.run()
 #    app.exec_()
