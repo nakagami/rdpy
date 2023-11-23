@@ -184,7 +184,7 @@ class RDPClientQtFactory(rdp.ClientFactory):
         """
         log.info("Connection failed : %s"%reason)
         reactor.stop()
-        app.exit()
+        os._exit(-1)
         
 def autoDetectKeyboardLayout():
     """
@@ -269,20 +269,20 @@ if __name__ == '__main__':
     else:
         ip, port = args[0], "3389"
     
-    #create application
-    app = QtGui.QApplication(sys.argv)
-    
-    #add qt4 reactor
-    import qt4reactor
-    qt4reactor.install()
-    
-    if fullscreen:
-        width = QtGui.QDesktopWidget().screenGeometry().width()
-        height = QtGui.QDesktopWidget().screenGeometry().height()
-    
+#    #create application
+#    app = QtGui.QApplication(sys.argv)
+#    
+#    #add qt4 reactor
+#    import qt4reactor
+#    qt4reactor.install()
+#    
+#    if fullscreen:
+#        width = QtGui.QDesktopWidget().screenGeometry().width()
+#        height = QtGui.QDesktopWidget().screenGeometry().height()
+#    
     log.info("keyboard layout set to %s"%keyboardLayout)
     
     from twisted.internet import reactor
     reactor.connectTCP(ip, int(port), RDPClientQtFactory(width, height, username, password, domain, fullscreen, keyboardLayout, optimized, "nego", recodedPath))
-    reactor.runReturn()
-    app.exec_()
+    reactor.run()
+#    app.exec_()
