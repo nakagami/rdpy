@@ -198,7 +198,7 @@ class Client(X224Layer):
         @see: response -> http://msdn.microsoft.com/en-us/library/cc240506.aspx
         @see: failure ->http://msdn.microsoft.com/en-us/library/cc240507.aspx
         """
-        log.debug("Client.recvConnectionCnfirm()")
+        log.debug("Client.recvConnectionConfirm()")
         message = ServerConnectionConfirm()
         data.readType(message)
         
@@ -237,6 +237,9 @@ class Client(X224Layer):
             log.info("*" * 43)
             log.info("*" + " " * 10  + "NLA Security selected" + " " * 10 + "*")
             log.info("*" * 43)
+            log.debug("Client.recvConnectionConfirm() 1")
+            log.debug(self._presentation.connect())     # DELETE ME
+            log.debug("Client.recvConnectionConfirm() 2")
             self._transport.startNLA(ClientTLSContext(), lambda:self._presentation.connect())
 
 class Server(X224Layer):

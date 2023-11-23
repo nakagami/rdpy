@@ -303,6 +303,7 @@ class Client(MCSLayer):
         @param presentation: {Layer} presentation layer
         @param virtualChannels: {Array(Layer)} list additional channels like rdpsnd... [tuple(mcs.ChannelDef, layer)]
         """
+        log.debug("ft125.mcs.Client.__init__({presentation})")
         MCSLayer.__init__(self, presentation, DomainMCSPDU.SEND_DATA_INDICATION, DomainMCSPDU.SEND_DATA_REQUEST, virtualChannels)
         #use to know state of static channel
         self._isGlobalChannelRequested = False
@@ -316,6 +317,7 @@ class Client(MCSLayer):
         Send ConnectInitial
         Wait ConnectResponse
         """
+        log.debug("t125.mcs.Client.connect()")
         self._clientSettings.CS_CORE.serverSelectedProtocol.value = self._transport._selectedProtocol
         #ask for virtual channel
         self._clientSettings.CS_NET.channelDefArray._array = [x for (x, _) in self._virtualChannels]
