@@ -169,7 +169,7 @@ class ChallengeMessage(CompositeType):
     @see: https://msdn.microsoft.com/en-us/library/cc236642.aspx
     """
     def __init__(self):
-        log.debug("ChallengeMessage.__init__()")
+        log.debug("ntlm.ChallengeMessage.__init__()")
         CompositeType.__init__(self)
         self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000002, constant = True)
@@ -191,12 +191,14 @@ class ChallengeMessage(CompositeType):
         self.Payload = String()
         
     def getTargetName(self):
-        log.debug("ChallengeMessage.getTargetName()")
-        return getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
+        v = getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
+        log.debug("ntlm.ChallengeMessage.getTargetName()={v}")
+        return v
     
     def getTargetInfo(self):
-        log.debug("ChallengeMessage.getTargetInfo()")
-        return getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
+        v = getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
+        log.debug("ntlm.ChallengeMessage.getTargetInfo()={v}")
+        return v
     
     def getTargetInfoAsAvPairArray(self):
         """
@@ -210,9 +212,11 @@ class ChallengeMessage(CompositeType):
             avPair = AvPair()
             s.readType(avPair)
             if avPair.AvId.value == AvId.MsvAvEOL:
-                log.debug(f"\tresult={result}")
+                log.debug(f"ntlm.ChallengeMessage.getTargetInfoAsAvPairArray() = {result}")
                 return result
             result[avPair.AvId.value] = avPair.Value.value
+
+        raise ValueError("Can't parse target info")
 
         
 class AuthenticateMessage(CompositeType):

@@ -269,9 +269,11 @@ class CSSP(protocol.Protocol):
         message, self._interface = self._authenticationProtocol.getAuthenticateMessage(getNegoTokens(request)[0])
         #get back public key
         #convert from der to ber...
-        pubKeyDer = crypto.dump_privatekey(crypto.FILETYPE_ASN1, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
+        pkey = self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()
+        log.debug(pkey)
+        log.debug(f"{crypto.dump_publickey(crypto.FILETYPE_PEM, pkey).decode('utf-8')}")
+        pubKeyDer = crypto.dump_privatekey(crypto.FILETYPE_ASN1, pkey)
         pubKey = der_decoder.decode(pubKeyDer, asn1Spec=OpenSSLRSAPublicKey())[0]
-        
         rsa = x509.RSAPublicKey()
         rsa.setComponentByName("modulus", univ.Integer(pubKey.getComponentByName('modulus')._value))
         rsa.setComponentByName("publicExponent", univ.Integer(pubKey.getComponentByName('publicExponent')._value))
