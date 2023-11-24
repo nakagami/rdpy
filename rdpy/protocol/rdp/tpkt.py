@@ -25,6 +25,7 @@ Use to build correct size packet and handle slow path and fast path mode
 from rdpy.core.layer import RawLayer
 from rdpy.core.type import UInt8, UInt16Be, sizeof
 from rdpy.core.error import CallPureVirtualFuntion
+import rdpy.core.log as log
 
 class Action(object):
     """
@@ -125,6 +126,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary:  Call when transport layer connection
                     is made (inherit from RawLayer)
         """
+        log.debug("TPKT.connect()")
         #header is on two bytes
         self.expect(2, self.readHeader)
         #no connection automata on this layer
@@ -136,6 +138,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Read header of TPKT packet
         @param data: {Stream} received from twisted layer
         """
+        log.debug("TPKT.readHeader()")
         #first read packet version
         version = UInt8()
         data.readType(version)
@@ -207,6 +210,7 @@ class TPKT(RawLayer, IFastPathSender):
         @param fastPathS: {Type | Tuple} type transform to stream and send as fastpath
         @param secFlag: {integer} Security flag for fastpath packet
         """
+        log.debug("TPKT.sendFastPath()")
         RawLayer.send(self, (UInt8(Action.FASTPATH_ACTION_FASTPATH | ((secFlag & 0x3) << 6)), UInt16Be((sizeof(fastPathS) + 3) | 0x8000), fastPathS))
     
     def startTLS(self, sslContext):
@@ -214,6 +218,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: start TLS protocol
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         """
+        log.debug("TPKT.startTLS()")
         self.transport.startTLS(sslContext)
        
     def startNLA(self, sslContext, callback):
@@ -221,4 +226,5 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: use to start NLA (NTLM over SSL) protocol
                     must be called after startTLS function
         """
+        log.debug("TPKT.startNLA()")
         self.transport.startNLA(sslContext, callback)

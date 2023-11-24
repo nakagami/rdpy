@@ -132,6 +132,7 @@ class X224Layer(LayerAutomata, IStreamSender):
         """
         @param presentation: upper layer, MCS layer in RDP case
         """
+        log.debug(f"X224Layer.__init__({presentation})")
         LayerAutomata.__init__(self, presentation)
         #client requested selectedProtocol
         self._requestedProtocol = Protocols.PROTOCOL_SSL | Protocols.PROTOCOL_HYBRID
@@ -197,7 +198,7 @@ class Client(X224Layer):
         @see: response -> http://msdn.microsoft.com/en-us/library/cc240506.aspx
         @see: failure ->http://msdn.microsoft.com/en-us/library/cc240507.aspx
         """
-        log.debug("Client.recvConnectionCnfirm()")
+        log.debug("Client.recvConnectionConfirm()")
         message = ServerConnectionConfirm()
         data.readType(message)
         
@@ -327,7 +328,7 @@ class ClientTLSContext(ssl.ClientContextFactory):
     @summary: client context factory for open ssl
     """
     def getContext(self):
-        context = SSL.Context(SSL.TLSv1_METHOD)
+        context = SSL.Context(SSL.SSLv23_METHOD)
         context.set_options(SSL.OP_DONT_INSERT_EMPTY_FRAGMENTS)
         context.set_options(SSL.OP_TLS_BLOCK_PADDING_BUG)
         return context

@@ -119,6 +119,7 @@ class MCSLayer(LayerAutomata):
             send function of MCS layer
             @param data: {type.Type | Tuple}
             """
+            log.debug(f"mcs.MCSLayer.MCSProxySender.send({data})")
             self._mcs.send(self._channelId, data)
             
         def close(self):
@@ -303,6 +304,7 @@ class Client(MCSLayer):
         @param presentation: {Layer} presentation layer
         @param virtualChannels: {Array(Layer)} list additional channels like rdpsnd... [tuple(mcs.ChannelDef, layer)]
         """
+        log.debug("ft125.mcs.Client.__init__({presentation})")
         MCSLayer.__init__(self, presentation, DomainMCSPDU.SEND_DATA_INDICATION, DomainMCSPDU.SEND_DATA_REQUEST, virtualChannels)
         #use to know state of static channel
         self._isGlobalChannelRequested = False
@@ -316,6 +318,7 @@ class Client(MCSLayer):
         Send ConnectInitial
         Wait ConnectResponse
         """
+        log.debug("t125.mcs.Client.connect()")
         self._clientSettings.CS_CORE.serverSelectedProtocol.value = self._transport._selectedProtocol
         #ask for virtual channel
         self._clientSettings.CS_NET.channelDefArray._array = [x for (x, _) in self._virtualChannels]
@@ -437,7 +440,7 @@ class Client(MCSLayer):
         ccReqStream = Stream()
         ccReqStream.writeType(ccReq)
         
-        tmp = (ber.writeOctetstring("\x01"), ber.writeOctetstring("\x01"), ber.writeBoolean(True),
+        tmp = (ber.writeOctetstring(b"\x01"), ber.writeOctetstring(b"\x01"), ber.writeBoolean(True),
                self.writeDomainParams(34, 2, 0, 0xffff),
                self.writeDomainParams(1, 1, 1, 0x420),
                self.writeDomainParams(0xffff, 0xfc17, 0xffff, 0xffff),
