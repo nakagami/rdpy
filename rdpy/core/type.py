@@ -457,7 +457,11 @@ class CompositeType(Type):
         readLen = 0
         for name in self._typeName:            
             try:
+                import binascii
+                print('name=', name)
+                log.debug(f"__read__() 1 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
                 s.readType(self.__dict__[name])
+                log.debug(f"__read__() 2 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
                 readLen += sizeof(self.__dict__[name])
                 #read is ok but read out of bound
                 if not self._readLen is None and readLen > self._readLen.value:

@@ -310,6 +310,12 @@ class ServerSecurityData(CompositeType):
         self.serverRandom = String(readLen = self.serverRandomLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
         self.serverCertificate = ServerCertificate(readLen = self.serverCertLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
 
+    def __read__(self, s):
+        log.debug("gcc.ServerSecurityData.__read__()")
+        for name in self._typeName:
+            print(name)
+        super().__read__(s)
+
 class ServerCertificate(CompositeType):
     """
     @summary: Server certificate structure
