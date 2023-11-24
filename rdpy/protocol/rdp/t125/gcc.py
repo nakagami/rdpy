@@ -305,16 +305,12 @@ class ServerSecurityData(CompositeType):
         CompositeType.__init__(self, readLen = readLen)
         self.encryptionMethod = UInt32Le()
         self.encryptionLevel = UInt32Le() 
-        self.serverRandomLen = UInt32Le(0x00000020, constant = True, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
-        self.serverCertLen = UInt32Le(lambda:sizeof(self.serverCertificate), conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
-        self.serverRandom = String(readLen = self.serverRandomLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
-        self.serverCertificate = ServerCertificate(readLen = self.serverCertLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#       TODO: Do we need to acquire this data?
+#        self.serverRandomLen = UInt32Le(0x00000020, constant = True, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#        self.serverCertLen = UInt32Le(lambda:sizeof(self.serverCertificate), conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#        self.serverRandom = String(readLen = self.serverRandomLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#        self.serverCertificate = ServerCertificate(readLen = self.serverCertLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
 
-    def __read__(self, s):
-        log.debug("gcc.ServerSecurityData.__read__()")
-        for name in self._typeName:
-            print(name)
-        super().__read__(s)
 
 class ServerCertificate(CompositeType):
     """
@@ -575,34 +571,19 @@ def readConferenceCreateResponse(s):
     @param s: Stream
     @return: ServerSettings 
     """
-    import binascii
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() ({binascii.hexlify(s.getvalue()).decode('utf-8')})")
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 1 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
-
     per.readChoice(s)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 2 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readObjectIdentifier(s, t124_02_98_oid)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 3 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readLength(s)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 4 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readChoice(s)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 5 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readInteger16(s, 1001)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 6 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readInteger(s)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 7 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readEnumerates(s)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 8 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readNumberOfSet(s)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 9 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readChoice(s)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 10 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     if not per.readOctetStream(s, h221_sc_key, 4):
         raise InvalidExpectedDataException("cannot read h221_sc_key")
     
-    log.debug(f"gcc.Settings.readConferenceCreateResponse() 11 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     length = per.readLength(s)
-    log.debug(f"length={length}")
 
     serverSettings = Settings(readLen = CallableValue(length))
     s.readType(serverSettings)
