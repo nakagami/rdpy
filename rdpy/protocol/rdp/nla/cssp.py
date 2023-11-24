@@ -270,13 +270,13 @@ class CSSP(protocol.Protocol):
         #get back public key
         #convert from der to ber...
         pkey = self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()
-        log.debug(pkey)
         log.debug(f"{crypto.dump_publickey(crypto.FILETYPE_PEM, pkey).decode('utf-8')}")
-        pubKeyDer = crypto.dump_privatekey(crypto.FILETYPE_ASN1, pkey)
-        pubKey = der_decoder.decode(pubKeyDer, asn1Spec=OpenSSLRSAPublicKey())[0]
+        public_numbers = pkey.to_cryptography_key().public_numbers()
+        log.debug(f"public_numbers={public_numbers}")
+
         rsa = x509.RSAPublicKey()
-        rsa.setComponentByName("modulus", univ.Integer(pubKey.getComponentByName('modulus')._value))
-        rsa.setComponentByName("publicExponent", univ.Integer(pubKey.getComponentByName('publicExponent')._value))
+        rsa.setComponentByName("modulus", univ.Integer(public_numbers.n))
+        rsa.setComponentByName("publicExponent", univ.Integer(public_numbers.e))
         self._pubKeyBer = ber_encoder.encode(rsa)
         
         #send authenticate message with public key encoded
