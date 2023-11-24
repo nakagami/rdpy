@@ -569,20 +569,35 @@ def readConferenceCreateResponse(s):
     @param s: Stream
     @return: ServerSettings 
     """
-    log.debug(f"gcc.Settings.readConferenceCreateResponse({s})")
+    import binascii
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() ({binascii.hexlify(s.getvalue()).decode('utf-8')})")
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 1 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
+
     per.readChoice(s)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 2 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readObjectIdentifier(s, t124_02_98_oid)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 3 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readLength(s)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 4 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readChoice(s)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 5 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readInteger16(s, 1001)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 6 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readInteger(s)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 7 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readEnumerates(s)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 8 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readNumberOfSet(s)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 9 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     per.readChoice(s)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 10 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     if not per.readOctetStream(s, h221_sc_key, 4):
         raise InvalidExpectedDataException("cannot read h221_sc_key")
     
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() 11 {binascii.hexlify(s.getvalue()[s.pos:]).decode('utf-8')})")
     length = per.readLength(s)
+    log.debug(f"length={length}")
+
     serverSettings = Settings(readLen = CallableValue(length))
     s.readType(serverSettings)
     log.debug(f"gcc.Settings.readConferenceCreateResponse()={serverSettings}")
