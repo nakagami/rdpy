@@ -29,7 +29,7 @@ import rdpy.security.pyDes as pyDes
 import rdpy.security.rc4 as rc4
 from rdpy.security.rsa_wrapper import random
 from rdpy.core.type import CompositeType, CallableValue, String, UInt8, UInt16Le, UInt24Le, UInt32Le, sizeof, Stream
-from rdpy.core import filetimes, error
+from rdpy.core import filetimes, error, log
 
 class MajorVersion(object):
     """
@@ -169,6 +169,7 @@ class ChallengeMessage(CompositeType):
     @see: https://msdn.microsoft.com/en-us/library/cc236642.aspx
     """
     def __init__(self):
+        log.debug("ChallengeMessage.__init__()")
         CompositeType.__init__(self)
         self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000002, constant = True)
@@ -190,9 +191,11 @@ class ChallengeMessage(CompositeType):
         self.Payload = String()
         
     def getTargetName(self):
+        log.debug("ChallengeMessage.getTargetName()")
         return getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
     
     def getTargetInfo(self):
+        log.debug("ChallengeMessage.getTargetInfo()")
         return getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
     
     def getTargetInfoAsAvPairArray(self):
@@ -200,15 +203,17 @@ class ChallengeMessage(CompositeType):
         @summary: Parse Target info field to retrieve array of AvPair
         @return: {map(AvId, str)}
         """
+        log.debug("ChallengeMessage.getTargetInfoAsAvPairArray()")
         result = {}
         s = Stream(self.getTargetInfo())
         while(True):
             avPair = AvPair()
             s.readType(avPair)
             if avPair.AvId.value == AvId.MsvAvEOL:
+                log.debug(f"\tresult={result}")
                 return result
             result[avPair.AvId.value] = avPair.Value.value
-            
+
         
 class AuthenticateMessage(CompositeType):
     """
@@ -216,6 +221,7 @@ class AuthenticateMessage(CompositeType):
     @see: https://msdn.microsoft.com/en-us/library/cc236643.aspx
     """
     def __init__(self):
+        log.debug("AuthenticateMessage.__init__()")
         CompositeType.__init__(self)
         self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000003, constant = True)
@@ -257,6 +263,7 @@ class AuthenticateMessage(CompositeType):
         return getPayLoadField(self, self.DomainNameLen.value, self.DomainNameBufferOffset.value)
     
     def getLmChallengeResponse(self):
+        log.debug("AuthenticateMessage.getLmChallengeResponse()")
         return getPayLoadField(self, self.LmChallengeResponseLen.value, self.LmChallengeResponseBufferOffset.value)
     
     def getNtChallengeResponse(self):
@@ -308,6 +315,8 @@ def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmCh
     message.EncryptedRandomSessionBufferOffset.value = offset
     message.Payload.value += EncryptedRandomSessionKey
     offset += len(EncryptedRandomSessionKey)
+
+    log.debug(f"AuthenticateMessage.getLmChallengeResponse() = {message}")
     
     return message
 
