@@ -257,20 +257,29 @@ class AuthenticateMessage(CompositeType):
         self.Payload = String()
         
     def getUserName(self):
-        return getPayLoadField(self, self.UserNameLen.value, self.UserNameBufferOffset.value)
+        v = getPayLoadField(self, self.UserNameLen.value, self.UserNameBufferOffset.value)
+        log.debug(f"AuthenticateMessage.getUserName()={v}")
+        return v
     
     def getDomainName(self):
-        return getPayLoadField(self, self.DomainNameLen.value, self.DomainNameBufferOffset.value)
+        v = getPayLoadField(self, self.DomainNameLen.value, self.DomainNameBufferOffset.value)
+        log.debug(f"AuthenticateMessage.getDomainName()={v}")
+        return v
     
     def getLmChallengeResponse(self):
-        log.debug("AuthenticateMessage.getLmChallengeResponse()")
-        return getPayLoadField(self, self.LmChallengeResponseLen.value, self.LmChallengeResponseBufferOffset.value)
+        v = getPayLoadField(self, self.LmChallengeResponseLen.value, self.LmChallengeResponseBufferOffset.value)
+        log.debug("AuthenticateMessage.getLmChallengeResponse()={v}")
+        return v
     
     def getNtChallengeResponse(self):
-        return getPayLoadField(self, self.NtChallengeResponseLen.value, self.NtChallengeResponseBufferOffset.value)
+        v = getPayLoadField(self, self.NtChallengeResponseLen.value, self.NtChallengeResponseBufferOffset.value)
+        log.debug("AuthenticateMessage.getNtChallengeResponse()={v}")
+        return v
     
     def getEncryptedRandomSession(self):
-        return getPayLoadField(self, self.EncryptedRandomSessionLen.value, self.EncryptedRandomSessionBufferOffset.value)
+        v = getPayLoadField(self, self.EncryptedRandomSessionLen.value, self.EncryptedRandomSessionBufferOffset.value)
+        log.debug("AuthenticateMessage.getEncryptedRandomSession()={v}")
+        return v
 
 def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, Workstation):
     """
@@ -315,8 +324,7 @@ def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmCh
     message.EncryptedRandomSessionBufferOffset.value = offset
     message.Payload.value += EncryptedRandomSessionKey
     offset += len(EncryptedRandomSessionKey)
-
-    log.debug(f"AuthenticateMessage.getLmChallengeResponse() = {message}")
+    log.debug(f"AuthenticateMessage.createAuthenticationMessage() = {message}")
     
     return message
 
