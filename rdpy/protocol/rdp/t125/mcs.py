@@ -119,6 +119,7 @@ class MCSLayer(LayerAutomata):
             send function of MCS layer
             @param data: {type.Type | Tuple}
             """
+            log.debug(f"mcs.MCSLayer.MCSProxySender.send({data})")
             self._mcs.send(self._channelId, data)
             
         def close(self):
