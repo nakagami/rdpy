@@ -455,7 +455,7 @@ class ChannelDef(CompositeType):
     Channels structure share between client and server
     @see: http://msdn.microsoft.com/en-us/library/cc240513.aspx
     """
-    def __init__(self, name = "", options = 0):
+    def __init__(self, name = b"", options = 0):
         CompositeType.__init__(self)
         #name of channel
         self.name = String(name[0:8] + b"\x00" * (8 - len(name)), readLen = CallableValue(8))
