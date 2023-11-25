@@ -942,8 +942,8 @@ static PyMethodDef rle_methods[] =
 static struct PyModuleDef cModRle =
 {
     PyModuleDef_HEAD_INIT,
-    "bitmap_decompress",
-    "decompress bitmap from microsoft rle algorithm.",
+    "rle",
+    "",
     -1,
     rle_methods
 };
