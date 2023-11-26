@@ -58,6 +58,7 @@ class Layer(object):
         """
         @param presentation: presentation layer
         """
+        log.debug("core.layer.Layer.__init__()")
         #presentation layer higher layer in model
         self._presentation = presentation
         #transport layer under layer in model
@@ -71,6 +72,7 @@ class Layer(object):
         @summary:  Call when transport layer is connected
                     default is send connect event to presentation layer
         """
+        log.debug("core.layer.Layer.connect()")
         if not self._presentation is None:
             self._presentation.connect()
     
@@ -79,6 +81,7 @@ class Layer(object):
         @summary:  Close layer event
                     default is sent to transport layer
         """
+        log.debug("core.layer.Layer.close()")
         if not self._transport is None:
             self._transport.close()
             

@@ -44,7 +44,7 @@ class RDPClientRecorder(RDPClient):
         @param height: {int} height of widget
         @param rssRecorder: {rss.FileRecorder}
         """
-        RDPClientQt.__init__(self, controller, width, height)
+        RDPClient.__init__(self, controller, width, height)
         self._screensize = width, height
         self._rssRecorder = rssRecorder
         
@@ -62,30 +62,34 @@ class RDPClientRecorder(RDPClient):
         @param data: {str} bitmap data
         """
         #record update
+        log.debug("RDPClientRecorder.onUpdate()")
         self._rssRecorder.update(destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, rss.UpdateFormat.BMP if isCompress else rss.UpdateFormat.RAW, data)
-        RDPClientQt.onUpdate(self, destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, isCompress, data)
+        RDPClient.onUpdate(self, destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, isCompress, data)
     
     def onReady(self):
         """
         @summary: Call when stack is ready
         """
+        log.debug("RDPClientRecorder.onReady()")
         self._rssRecorder.screen(self._screensize[0], self._screensize[1], self._controller.getColorDepth())
-        RDPClientQt.onReady(self)
+        RDPClient.onReady(self)
           
     def onClose(self):
         """
         @summary: Call when stack is close
         """
+        log.debug("RDPClientRecorder.onClose()")
         self._rssRecorder.close()
-        RDPClientQt.onClose(self)
+        RDPClient.onClose(self)
         
     def closeEvent(self, e):
         """
         @summary: Convert Qt close widget event into close stack event
         @param e: QCloseEvent
         """
+        log.debug("RDPClientRecorder.onEvent()")
         self._rssRecorder.close()
-        RDPClientQt.closeEvent(self, e)
+        RDPClient.closeEvent(self, e)
 
 class RDPClientFactory(rdp.ClientFactory):
     """
@@ -127,10 +131,10 @@ class RDPClientFactory(rdp.ClientFactory):
     def buildObserver(self, controller, addr):
         """
         @summary:  Build RFB observer
-                    We use a RDPClientQt as RDP observer
+                    We use a RDPClient as RDP observer
         @param controller: build factory and needed by observer
         @param addr: destination address
-        @return: RDPClientQt
+        @return: RDPClient
         """
         #create client observer
         if self._recodedPath is None:

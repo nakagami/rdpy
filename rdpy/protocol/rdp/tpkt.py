@@ -106,6 +106,7 @@ class TPKT(RawLayer, IFastPathSender):
         """
         @param presentation: {Layer} presentation layer, in RDP case is x224 layer
         """
+        log.debug("TPKT.__init__()")
         RawLayer.__init__(self, presentation)
         #length may be coded on more than 1 bytes
         self._lastShortLength = UInt8()
@@ -119,6 +120,7 @@ class TPKT(RawLayer, IFastPathSender):
         @param fastPathListener : {IFastPathListener}
         @note: implement IFastPathSender
         """
+        log.debug("TPKT.setFastPathListener()")
         self._fastPathListener = fastPathListener
         
     def connect(self):
@@ -138,6 +140,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Read header of TPKT packet
         @param data: {Stream} received from twisted layer
         """
+        log.debug("TPKT.readHeader()")
         #first read packet version
         version = UInt8()
         data.readType(version)
@@ -163,6 +166,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Header may be on 4 bytes
         @param data: {Stream} from twisted layer
         """
+        log.debug("TPKT.readExtendedHeader()")
         #next state is read data
         size = UInt16Be()
         data.readType(size)
@@ -185,6 +189,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Fast path data
         @param data: {Stream} from twisted layer
         """
+        log.debug("TPKT.recvFastPath()")
         self._fastPathListener.recvFastPath(self._secFlag, data)
         self.expect(2, self.readHeader)
     
@@ -193,6 +198,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Read classic TPKT packet, last state in tpkt automata
         @param data: {Stream} with correct size
         """
+        log.debug("TPKT.readData()")
         #next state is pass to 
         self._presentation.recv(data)
         self.expect(2, self.readHeader)
@@ -202,6 +208,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Send encompassed data
         @param message: {network.Type} message to send
         """
+        log.debug("TPKT.send()")
         RawLayer.send(self, (UInt8(Action.FASTPATH_ACTION_X224), UInt8(0), UInt16Be(sizeof(message) + 4), message))
         
     def sendFastPath(self, secFlag, fastPathS):

@@ -226,6 +226,7 @@ class CSSP(protocol.Protocol):
         """
         @summary: install proxy
         """
+        log.debug("CSSP.connectionMode()")
         self._layer.transport = self
         self._layer.getDescriptor = lambda:self.transport
         self._layer.connectionMade()
@@ -235,6 +236,7 @@ class CSSP(protocol.Protocol):
         @summary: write data on transport layer
         @param data: {str}
         """
+        log.debug("CSSP.write()")
         self.transport.write(data)
     
     def startTLS(self, sslContext):
@@ -264,6 +266,7 @@ class CSSP(protocol.Protocol):
         @summary: second state in cssp automata
         @param data : {str} all data available on buffer
         """
+        log.debug("CSSP.recvChallenge()")
         request = decodeDERTRequest(data)
         message, self._interface = self._authenticationProtocol.getAuthenticateMessage(getNegoTokens(request)[0])
         #get back public key
