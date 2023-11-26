@@ -29,7 +29,7 @@ import rdpy.security.pyDes as pyDes
 import rdpy.security.rc4 as rc4
 from rdpy.security.rsa_wrapper import random
 from rdpy.core.type import CompositeType, CallableValue, String, UInt8, UInt16Le, UInt24Le, UInt32Le, sizeof, Stream
-from rdpy.core import filetimes, error
+from rdpy.core import filetimes, error, log
 
 class MajorVersion(object):
     """
@@ -169,6 +169,7 @@ class ChallengeMessage(CompositeType):
     @see: https://msdn.microsoft.com/en-us/library/cc236642.aspx
     """
     def __init__(self):
+        log.debug("ntlm.ChallengeMessage.__init__()")
         CompositeType.__init__(self)
         self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000002, constant = True)
@@ -208,7 +209,9 @@ class ChallengeMessage(CompositeType):
             if avPair.AvId.value == AvId.MsvAvEOL:
                 return result
             result[avPair.AvId.value] = avPair.Value.value
-            
+
+        raise ValueError("Can't parse target info")
+
         
 class AuthenticateMessage(CompositeType):
     """
@@ -216,6 +219,7 @@ class AuthenticateMessage(CompositeType):
     @see: https://msdn.microsoft.com/en-us/library/cc236643.aspx
     """
     def __init__(self):
+        log.debug("AuthenticateMessage.__init__()")
         CompositeType.__init__(self)
         self.Signature = String(b"NTLMSSP\x00", readLen = CallableValue(8), constant = True)
         self.MessageType = UInt32Le(0x00000003, constant = True)
@@ -265,6 +269,7 @@ class AuthenticateMessage(CompositeType):
     def getEncryptedRandomSession(self):
         return getPayLoadField(self, self.EncryptedRandomSessionLen.value, self.EncryptedRandomSessionBufferOffset.value)
 
+
 def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, Workstation):
     """
     @summary: Create an Authenticate Message
@@ -308,6 +313,7 @@ def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmCh
     message.EncryptedRandomSessionBufferOffset.value = offset
     message.Payload.value += EncryptedRandomSessionKey
     offset += len(EncryptedRandomSessionKey)
+    log.debug(f"AuthenticateMessage.createAuthenticationMessage() = {message}")
     
     return message
 
@@ -346,7 +352,7 @@ def DESL(key, data):
     @param key: {str} Des key
     @param data: {str} encrypted data
     """
-    return DES(key[0:7], data) + DES(key[7:14], data) + DES(key[14:16] + "\x00" * 5, data)
+    return DES(key[0:7], data) + DES(key[7:14], data) + DES(key[14:16] + b"\x00" * 5, data)
 
 def UNICODE(s):
     """
@@ -539,7 +545,7 @@ class NTLMv2(sspi.IAuthenticationProtocol):
         computeMIC = False
         ServerName = self._challengeMessage.getTargetInfo()
         infos = self._challengeMessage.getTargetInfoAsAvPairArray()
-        if infos.has_key(AvId.MsvAvTimestamp):
+        if AvId.MsvAvTimestamp in infos:
             Timestamp = infos[AvId.MsvAvTimestamp]
             computeMIC = True
         else:
@@ -555,7 +561,7 @@ class NTLMv2(sspi.IAuthenticationProtocol):
         if self._challengeMessage.NegotiateFlags.value & Negotiate.NTLMSSP_NEGOTIATE_UNICODE:
             self._enableUnicode = True
             domain, user = UNICODE(domain), UNICODE(user)
-        self._authenticateMessage = createAuthenticationMessage(self._challengeMessage.NegotiateFlags.value, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, "")
+        self._authenticateMessage = createAuthenticationMessage(self._challengeMessage.NegotiateFlags.value, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, b"")
         
         if computeMIC:
             self._authenticateMessage.MIC.value = MIC(ExportedSessionKey, self._negotiateMessage, self._challengeMessage, self._authenticateMessage)

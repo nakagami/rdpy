@@ -57,7 +57,8 @@ class TSRequest(univ.Sequence):
         namedtype.OptionalNamedType('negoTokens', NegoData().subtype(explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 1))),
         namedtype.OptionalNamedType('authInfo', univ.OctetString().subtype(explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 2))),
         namedtype.OptionalNamedType('pubKeyAuth', univ.OctetString().subtype(explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 3))),
-        namedtype.OptionalNamedType('errorCode', univ.Integer().subtype(explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 4)))
+        namedtype.OptionalNamedType('errorCode', univ.Integer().subtype(explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 4))),
+        namedtype.OptionalNamedType('clientNonce', univ.OctetString().subtype(explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 5))),
         )
 
 class TSCredentials(univ.Sequence):
@@ -187,6 +188,7 @@ class CSSP(protocol.Protocol):
         @param layer: {type.Layer.RawLayer}
         @param authenticationProtocol: {sspi.IAuthenticationProtocol}
         """
+        log.debug(f"CSSP.__init__({layer}, {authenticationProtocol})")
         self._layer = layer
         self._authenticationProtocol = authenticationProtocol
         #IGenericSecurityService
@@ -199,6 +201,7 @@ class CSSP(protocol.Protocol):
         @summary: Call by RawLayer Factory
         @param param: RawLayerClientFactory or RawLayerFactory
         """
+        log.debug(f"CSSP.setFactory({factory})")
         self._layer.setFactory(factory)
         
     def dataReceived(self, data):
@@ -208,7 +211,7 @@ class CSSP(protocol.Protocol):
         @param data: string data receive from twisted
         """
         # data: 4.1.2 Client X.224 Connection Request PDU
-        log.debug("CSSP.dataRecievd() {binascii.hexlify(data).decode('utf-8')}")
+        log.debug(f"CSSP.dataRecievd() len={len((data))}")
         self._layer.dataReceived(data)
     
     def connectionLost(self, reason):
@@ -216,12 +219,14 @@ class CSSP(protocol.Protocol):
         @summary: Call from twisted engine when protocol is closed
         @param reason: str represent reason of close connection
         """
+        log.debug("CSSP.connectionLost()")
         self._layer._factory.connectionLost(self, reason)
             
     def connectionMade(self):
         """
         @summary: install proxy
         """
+        log.debug("CSSP.connectionMode()")
         self._layer.transport = self
         self._layer.getDescriptor = lambda:self.transport
         self._layer.connectionMade()
@@ -231,6 +236,7 @@ class CSSP(protocol.Protocol):
         @summary: write data on transport layer
         @param data: {str}
         """
+        log.debug("CSSP.write()")
         self.transport.write(data)
     
     def startTLS(self, sslContext):
@@ -238,6 +244,7 @@ class CSSP(protocol.Protocol):
         @summary: start TLS protocol
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         """
+        log.debug("CSSP.startTLS()")
         self.transport.startTLS(sslContext)
         
     def startNLA(self, sslContext, callback = None):
@@ -246,6 +253,7 @@ class CSSP(protocol.Protocol):
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         @param callback: {function} function call when cssp layer is read
         """
+        log.debug("CSSP.startNLA()")
         self._callback = callback
         self.startTLS(sslContext)
         #send negotiate message
@@ -258,16 +266,16 @@ class CSSP(protocol.Protocol):
         @summary: second state in cssp automata
         @param data : {str} all data available on buffer
         """
+        log.debug("CSSP.recvChallenge()")
         request = decodeDERTRequest(data)
         message, self._interface = self._authenticationProtocol.getAuthenticateMessage(getNegoTokens(request)[0])
         #get back public key
         #convert from der to ber...
-        pubKeyDer = crypto.dump_privatekey(crypto.FILETYPE_ASN1, self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey())
-        pubKey = der_decoder.decode(pubKeyDer, asn1Spec=OpenSSLRSAPublicKey())[0]
-        
+        pkey = self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()
+        public_numbers = pkey.to_cryptography_key().public_numbers()
         rsa = x509.RSAPublicKey()
-        rsa.setComponentByName("modulus", univ.Integer(pubKey.getComponentByName('modulus')._value))
-        rsa.setComponentByName("publicExponent", univ.Integer(pubKey.getComponentByName('publicExponent')._value))
+        rsa.setComponentByName("modulus", univ.Integer(public_numbers.n))
+        rsa.setComponentByName("publicExponent", univ.Integer(public_numbers.e))
         self._pubKeyBer = ber_encoder.encode(rsa)
         
         #send authenticate message with public key encoded
@@ -280,10 +288,11 @@ class CSSP(protocol.Protocol):
         @summary: the server send the pubKeyBer + 1
         @param data : {str} all data available on buffer
         """
+        log.debug("CSSP.recvPubKeyInc")
         request = decodeDERTRequest(data)
         pubKeyInc = self._interface.GSS_UnWrapEx(getPubKeyAuth(request))
         #check pubKeyInc = self._pubKeyBer + 1
-        if not (self._pubKeyBer[1:] == pubKeyInc[1:] and ord(self._pubKeyBer[0]) + 1 == ord(pubKeyInc[0])):
+        if not (self._pubKeyBer[1:] == pubKeyInc[1:] and self._pubKeyBer[0] + 1 == pubKeyInc[0]):
             raise error.InvalidExpectedDataException("CSSP : Invalid public key increment")
         
         domain, user, password = self._authenticationProtocol.getEncodedCredentials()

@@ -25,6 +25,7 @@ Use to build correct size packet and handle slow path and fast path mode
 from rdpy.core.layer import RawLayer
 from rdpy.core.type import UInt8, UInt16Be, sizeof
 from rdpy.core.error import CallPureVirtualFuntion
+import rdpy.core.log as log
 
 class Action(object):
     """
@@ -105,6 +106,7 @@ class TPKT(RawLayer, IFastPathSender):
         """
         @param presentation: {Layer} presentation layer, in RDP case is x224 layer
         """
+        log.debug("TPKT.__init__()")
         RawLayer.__init__(self, presentation)
         #length may be coded on more than 1 bytes
         self._lastShortLength = UInt8()
@@ -118,6 +120,7 @@ class TPKT(RawLayer, IFastPathSender):
         @param fastPathListener : {IFastPathListener}
         @note: implement IFastPathSender
         """
+        log.debug("TPKT.setFastPathListener()")
         self._fastPathListener = fastPathListener
         
     def connect(self):
@@ -125,6 +128,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary:  Call when transport layer connection
                     is made (inherit from RawLayer)
         """
+        log.debug("TPKT.connect()")
         #header is on two bytes
         self.expect(2, self.readHeader)
         #no connection automata on this layer
@@ -136,6 +140,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Read header of TPKT packet
         @param data: {Stream} received from twisted layer
         """
+        log.debug("TPKT.readHeader()")
         #first read packet version
         version = UInt8()
         data.readType(version)
@@ -161,6 +166,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Header may be on 4 bytes
         @param data: {Stream} from twisted layer
         """
+        log.debug("TPKT.readExtendedHeader()")
         #next state is read data
         size = UInt16Be()
         data.readType(size)
@@ -183,6 +189,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Fast path data
         @param data: {Stream} from twisted layer
         """
+        log.debug("TPKT.recvFastPath()")
         self._fastPathListener.recvFastPath(self._secFlag, data)
         self.expect(2, self.readHeader)
     
@@ -191,6 +198,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Read classic TPKT packet, last state in tpkt automata
         @param data: {Stream} with correct size
         """
+        log.debug("TPKT.readData()")
         #next state is pass to 
         self._presentation.recv(data)
         self.expect(2, self.readHeader)
@@ -200,6 +208,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Send encompassed data
         @param message: {network.Type} message to send
         """
+        log.debug("TPKT.send()")
         RawLayer.send(self, (UInt8(Action.FASTPATH_ACTION_X224), UInt8(0), UInt16Be(sizeof(message) + 4), message))
         
     def sendFastPath(self, secFlag, fastPathS):
@@ -207,6 +216,7 @@ class TPKT(RawLayer, IFastPathSender):
         @param fastPathS: {Type | Tuple} type transform to stream and send as fastpath
         @param secFlag: {integer} Security flag for fastpath packet
         """
+        log.debug("TPKT.sendFastPath()")
         RawLayer.send(self, (UInt8(Action.FASTPATH_ACTION_FASTPATH | ((secFlag & 0x3) << 6)), UInt16Be((sizeof(fastPathS) + 3) | 0x8000), fastPathS))
     
     def startTLS(self, sslContext):
@@ -214,6 +224,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: start TLS protocol
         @param sslContext: {ssl.ClientContextFactory | ssl.DefaultOpenSSLContextFactory} context use for TLS protocol
         """
+        log.debug("TPKT.startTLS()")
         self.transport.startTLS(sslContext)
        
     def startNLA(self, sslContext, callback):
@@ -221,4 +232,5 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: use to start NLA (NTLM over SSL) protocol
                     must be called after startTLS function
         """
+        log.debug("TPKT.startNLA()")
         self.transport.startNLA(sslContext, callback)

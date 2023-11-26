@@ -301,13 +301,16 @@ class ServerSecurityData(CompositeType):
     _TYPE_ = MessageType.SC_SECURITY
     
     def __init__(self, readLen = None):
+        log.debug("gcc.ServerSecurityData.__init__()")
         CompositeType.__init__(self, readLen = readLen)
         self.encryptionMethod = UInt32Le()
         self.encryptionLevel = UInt32Le() 
-        self.serverRandomLen = UInt32Le(0x00000020, constant = True, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
-        self.serverCertLen = UInt32Le(lambda:sizeof(self.serverCertificate), conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
-        self.serverRandom = String(readLen = self.serverRandomLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
-        self.serverCertificate = ServerCertificate(readLen = self.serverCertLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#       TODO: Do we need to acquire this data?
+#        self.serverRandomLen = UInt32Le(0x00000020, constant = True, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#        self.serverCertLen = UInt32Le(lambda:sizeof(self.serverCertificate), conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#        self.serverRandom = String(readLen = self.serverRandomLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+#        self.serverCertificate = ServerCertificate(readLen = self.serverCertLen, conditional = lambda:not(self.encryptionMethod.value == 0 and self.encryptionLevel == 0))
+
 
 class ServerCertificate(CompositeType):
     """
@@ -452,10 +455,10 @@ class ChannelDef(CompositeType):
     Channels structure share between client and server
     @see: http://msdn.microsoft.com/en-us/library/cc240513.aspx
     """
-    def __init__(self, name = "", options = 0):
+    def __init__(self, name = b"", options = 0):
         CompositeType.__init__(self)
         #name of channel
-        self.name = String(name[0:8] + "\x00" * (8 - len(name)), readLen = CallableValue(8))
+        self.name = String(name[0:8] + b"\x00" * (8 - len(name)), readLen = CallableValue(8))
         #unknown
         self.options = UInt32Le()
         
@@ -492,6 +495,7 @@ class Settings(CompositeType):
     @summary: Class which group all clients settings supported by RDPY
     """
     def __init__(self, init = [], readLen = None):
+        log.debug("gcc.Settings.__init__()")
         CompositeType.__init__(self, readLen = readLen)
         self.settings = ArrayType(DataBlock, [DataBlock(i) for i in init])
     
@@ -500,6 +504,7 @@ class Settings(CompositeType):
         @param messageType: type of block
         @return: specific block of type messageType
         """
+        log.debug("gcc.Settings.getBlock()")
         for i in self.settings._array:
             if i.type.value == messageType:
                 return i.dataBlock
@@ -519,6 +524,7 @@ def clientSettings():
     @summary: Build settings for client
     @return: Settings
     """
+    log.debug("gcc.Settings.clientSettings()")
     return Settings([ClientCoreData(), ClientNetworkData(), ClientSecurityData()])
 
 def serverSettings():
@@ -526,6 +532,7 @@ def serverSettings():
     @summary: Build settings for server
     @return Settings
     """
+    log.debug("gcc.Settings.serverSettings()")
     return Settings([ServerCoreData(), ServerSecurityData(), ServerNetworkData()])
         
 def readConferenceCreateRequest(s):
@@ -535,6 +542,7 @@ def readConferenceCreateRequest(s):
     @param s: Stream
     @param client settings (Settings)
     """
+    log.debug("gcc.Settings.readConferenceCreateRequest()")
     per.readChoice(s)
     per.readObjectIdentifier(s, t124_02_98_oid)
     per.readLength(s)
@@ -553,6 +561,7 @@ def readConferenceCreateRequest(s):
     length = per.readLength(s)
     clientSettings = Settings(readLen = CallableValue(length))
     s.readType(clientSettings)
+    log.debug(f"gcc.Settings.readConferenceCreateRequest()={clientSettings}")
     return clientSettings
     
 def readConferenceCreateResponse(s):
@@ -575,8 +584,10 @@ def readConferenceCreateResponse(s):
         raise InvalidExpectedDataException("cannot read h221_sc_key")
     
     length = per.readLength(s)
+
     serverSettings = Settings(readLen = CallableValue(length))
     s.readType(serverSettings)
+    log.debug(f"gcc.Settings.readConferenceCreateResponse()={serverSettings}")
     return serverSettings
 
 def writeConferenceCreateRequest(userData):
