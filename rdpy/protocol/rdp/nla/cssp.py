@@ -211,7 +211,7 @@ class CSSP(protocol.Protocol):
         @param data: string data receive from twisted
         """
         # data: 4.1.2 Client X.224 Connection Request PDU
-        log.debug(f"CSSP.dataRecievd() {binascii.hexlify(data).decode('utf-8')}")
+        log.debug(f"CSSP.dataRecievd() len={len((data))}")
         self._layer.dataReceived(data)
     
     def connectionLost(self, reason):
@@ -264,16 +264,12 @@ class CSSP(protocol.Protocol):
         @summary: second state in cssp automata
         @param data : {str} all data available on buffer
         """
-        log.debug("CSSP.recvChallenge()")
         request = decodeDERTRequest(data)
         message, self._interface = self._authenticationProtocol.getAuthenticateMessage(getNegoTokens(request)[0])
         #get back public key
         #convert from der to ber...
         pkey = self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()
-        log.debug(f"{crypto.dump_publickey(crypto.FILETYPE_PEM, pkey).decode('utf-8')}")
         public_numbers = pkey.to_cryptography_key().public_numbers()
-        log.debug(f"public_numbers={public_numbers}")
-
         rsa = x509.RSAPublicKey()
         rsa.setComponentByName("modulus", univ.Integer(public_numbers.n))
         rsa.setComponentByName("publicExponent", univ.Integer(public_numbers.e))

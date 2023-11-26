@@ -191,28 +191,22 @@ class ChallengeMessage(CompositeType):
         self.Payload = String()
         
     def getTargetName(self):
-        v = getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
-        log.debug("ntlm.ChallengeMessage.getTargetName()={v}")
-        return v
+        return getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
     
     def getTargetInfo(self):
-        v = getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
-        log.debug("ntlm.ChallengeMessage.getTargetInfo()={v}")
-        return v
+        return getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
     
     def getTargetInfoAsAvPairArray(self):
         """
         @summary: Parse Target info field to retrieve array of AvPair
         @return: {map(AvId, str)}
         """
-        log.debug("ChallengeMessage.getTargetInfoAsAvPairArray()")
         result = {}
         s = Stream(self.getTargetInfo())
         while(True):
             avPair = AvPair()
             s.readType(avPair)
             if avPair.AvId.value == AvId.MsvAvEOL:
-                log.debug(f"ntlm.ChallengeMessage.getTargetInfoAsAvPairArray() = {result}")
                 return result
             result[avPair.AvId.value] = avPair.Value.value
 
@@ -261,29 +255,20 @@ class AuthenticateMessage(CompositeType):
         self.Payload = String()
         
     def getUserName(self):
-        v = getPayLoadField(self, self.UserNameLen.value, self.UserNameBufferOffset.value)
-        log.debug(f"AuthenticateMessage.getUserName()={v}")
-        return v
+        return getPayLoadField(self, self.UserNameLen.value, self.UserNameBufferOffset.value)
     
     def getDomainName(self):
-        v = getPayLoadField(self, self.DomainNameLen.value, self.DomainNameBufferOffset.value)
-        log.debug(f"AuthenticateMessage.getDomainName()={v}")
-        return v
+        return getPayLoadField(self, self.DomainNameLen.value, self.DomainNameBufferOffset.value)
     
     def getLmChallengeResponse(self):
-        v = getPayLoadField(self, self.LmChallengeResponseLen.value, self.LmChallengeResponseBufferOffset.value)
-        log.debug("AuthenticateMessage.getLmChallengeResponse()={v}")
-        return v
+        return getPayLoadField(self, self.LmChallengeResponseLen.value, self.LmChallengeResponseBufferOffset.value)
     
     def getNtChallengeResponse(self):
-        v = getPayLoadField(self, self.NtChallengeResponseLen.value, self.NtChallengeResponseBufferOffset.value)
-        log.debug("AuthenticateMessage.getNtChallengeResponse()={v}")
-        return v
+        return getPayLoadField(self, self.NtChallengeResponseLen.value, self.NtChallengeResponseBufferOffset.value)
     
     def getEncryptedRandomSession(self):
-        v = getPayLoadField(self, self.EncryptedRandomSessionLen.value, self.EncryptedRandomSessionBufferOffset.value)
-        log.debug("AuthenticateMessage.getEncryptedRandomSession()={v}")
-        return v
+        return getPayLoadField(self, self.EncryptedRandomSessionLen.value, self.EncryptedRandomSessionBufferOffset.value)
+
 
 def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, Workstation):
     """

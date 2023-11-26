@@ -199,7 +199,7 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
                     main event of received data
         @param data: string data receive from twisted
         """
-        log.debug(f"RawLayer.dataReceived() {self.transport} {binascii.hexlify(data).decode('utf-8')}")
+        log.debug(f"RawLayer.dataReceived() {self.transport} len={len(data)}")
         #add in buffer
         self._buffer += data
         #while buffer have expected size call local callback
@@ -260,5 +260,5 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
         """
         s = Stream()
         s.writeType(message)
-        log.debug(f"RawLayer.send() {self.transport} {binascii.hexlify(s.getvalue()).decode('utf-8')}")
+        log.debug(f"RawLayer.send() {self.transport} len={len(s.getvalue())}")
         self.transport.write(s.getvalue())

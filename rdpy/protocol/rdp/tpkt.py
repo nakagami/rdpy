@@ -138,7 +138,6 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Read header of TPKT packet
         @param data: {Stream} received from twisted layer
         """
-        log.debug("TPKT.readHeader()")
         #first read packet version
         version = UInt8()
         data.readType(version)

@@ -304,7 +304,7 @@ class Client(MCSLayer):
         @param presentation: {Layer} presentation layer
         @param virtualChannels: {Array(Layer)} list additional channels like rdpsnd... [tuple(mcs.ChannelDef, layer)]
         """
-        log.debug("ft125.mcs.Client.__init__({presentation})")
+        log.debug(f"t125.mcs.Client.__init__({presentation})")
         MCSLayer.__init__(self, presentation, DomainMCSPDU.SEND_DATA_INDICATION, DomainMCSPDU.SEND_DATA_REQUEST, virtualChannels)
         #use to know state of static channel
         self._isGlobalChannelRequested = False
