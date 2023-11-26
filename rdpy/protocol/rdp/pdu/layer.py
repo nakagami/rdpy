@@ -128,6 +128,7 @@ class PDULayer(LayerAutomata, tpkt.IFastPathListener):
         @summary: Send a PDU data to transport layer
         @param pduMessage: PDU message
         """
+        log.debug("PDULayer.sendPDU()")
         self._transport.send(data.PDU(self._transport.getUserId(), pduMessage))
         
     def sendDataPDU(self, pduData):
@@ -135,6 +136,7 @@ class PDULayer(LayerAutomata, tpkt.IFastPathListener):
         @summary: Send an PDUData to transport layer
         @param pduData: PDU data message
         """
+        log.debug("PDULayer.sendDataPDU()")
         self.sendPDU(data.DataPDU(pduData, self._shareId))
 
 class Client(PDULayer):
@@ -472,6 +474,7 @@ class Server(PDULayer):
         Wait Control Request PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvClientControlCooperatePDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_COOPERATE:
