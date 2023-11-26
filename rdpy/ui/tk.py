@@ -65,7 +65,7 @@ class EventAdaptor(object):
         """ 
         raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "closeEvent", "EventAdaptor"))
     
-def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
+def RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data):
     """
     @summary: Bitmap transformation to Qt object
     @param width: width of bitmap
@@ -101,7 +101,7 @@ def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
             
     elif bitsPerPixel == 32:
         if isCompress:
-            log.debug(f"RDPBitmapToQtImage() {width}, {height}, {bitsPerPixel}, {isCompress}, {data}")
+            log.debug(f"RDPBitmapToArray() {width}, {height}, {bitsPerPixel}, {isCompress}, {data}")
             #buf = rle.bitmap_decompress(data, width, height, 4)
             #image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB32)
             pass
@@ -190,7 +190,7 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         @param isCompress: {bool} use RLE compression
         @param data: {str} bitmap data
         """
-        image = RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data)
+        image = RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data)
         #if image need to be cut
         #For bit alignement server may send more than image pixel
         #self._widget.notifyImage(destLeft, destTop, image, destRight - destLeft + 1, destBottom - destTop + 1)
