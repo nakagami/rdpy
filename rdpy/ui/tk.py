@@ -101,10 +101,13 @@ def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
             
     elif bitsPerPixel == 32:
         if isCompress:
-            buf = rle.bitmap_decompress(data, width, height, 4)
-            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB32)
+            log.debug(f"RDPBitmapToQtImage() {width}, {height}, {bitsPerPixel}, {isCompress}, {data}")
+            #buf = rle.bitmap_decompress(data, width, height, 4)
+            #image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB32)
+            pass
         else:
-            image = QtGui.QImage(data, width, height, QtGui.QImage.Format_RGB32).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            #image = QtGui.QImage(data, width, height, QtGui.QImage.Format_RGB32).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            pass
     else:
         log.error("Receive image in bad format")
         image = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
@@ -190,7 +193,8 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         image = RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data)
         #if image need to be cut
         #For bit alignement server may send more than image pixel
-        self._widget.notifyImage(destLeft, destTop, image, destRight - destLeft + 1, destBottom - destTop + 1)
+        #self._widget.notifyImage(destLeft, destTop, image, destRight - destLeft + 1, destBottom - destTop + 1)
+        log.debug(f"RDPClient.onUpdate({destLeft},{destTop},{destRight},{destBottom},{width},{height},{bitsPerPixel},{isCompress})")
     
     def onReady(self):
         """
