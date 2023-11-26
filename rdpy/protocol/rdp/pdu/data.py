@@ -442,6 +442,7 @@ class ShareControlHeader(CompositeType):
         @summary: Set pduType as constant
         @param totalLength: total length of PDU packet
         """
+        log.debug("pdf.data.ShareControlHeader__init__()")
         CompositeType.__init__(self)
         #share control header
         self.totalLength = UInt16Le(totalLength)
@@ -455,6 +456,7 @@ class ShareDataHeader(CompositeType):
     @see: http://msdn.microsoft.com/en-us/library/cc240577.aspx
     """
     def __init__(self, size, pduType2 = 0, shareId = 0):
+        log.debug("pdf.data.ShareDataHeader()")
         CompositeType.__init__(self)
         self.shareId = UInt32Le(shareId)
         self.pad1 = UInt8()
@@ -499,6 +501,7 @@ class DemandActivePDU(CompositeType):
     _PDUTYPE_ = PDUType.PDUTYPE_DEMANDACTIVEPDU
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.DemandActivePDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.shareId = UInt32Le()
         self.lengthSourceDescriptor = UInt16Le(lambda:sizeof(self.sourceDescriptor))
@@ -518,6 +521,7 @@ class ConfirmActivePDU(CompositeType):
     _PDUTYPE_ = PDUType.PDUTYPE_CONFIRMACTIVEPDU
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.ConfirmActivePDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.shareId = UInt32Le()
         self.originatorId = UInt16Le(0x03EA, constant = True)
@@ -537,6 +541,7 @@ class DeactiveAllPDU(CompositeType):
     _PDUTYPE_ = PDUType.PDUTYPE_DEACTIVATEALLPDU
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.DeactiveAllPDU()")
         #in old version this packet is empty i don't know
         #and not specified
         CompositeType.__init__(self, optional = True, readLen = readLen)
@@ -552,6 +557,7 @@ class DataPDU(CompositeType):
     _PDUTYPE_ = PDUType.PDUTYPE_DATAPDU
     
     def __init__(self, pduData = None, shareId = 0, readLen = None):
+        log.debug("pdf.data.DataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.shareDataHeader = ShareDataHeader(lambda:sizeof(self), lambda:self.pduData.__class__._PDUTYPE2_, shareId)
         
@@ -582,6 +588,7 @@ class SynchronizeDataPDU(CompositeType):
         """
         @param targetUser: MCS Channel ID
         """
+        log.debug("pdf.data.SynchronizeDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.messageType = UInt16Le(1, constant = True)
         self.targetUser = UInt16Le(targetUser)
@@ -597,6 +604,7 @@ class ControlDataPDU(CompositeType):
         @param action: Action macro
         @param readLen: Max length to read
         """
+        log.debug("pdf.data.ControlDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.action = UInt16Le(action, constant = True) if not action is None else UInt16Le()
         self.grantId = UInt16Le()
@@ -614,6 +622,7 @@ class ErrorInfoDataPDU(CompositeType):
         @param errorInfo: ErrorInfo macro
         @param readLen: Max length to read
         """
+        log.debug("pdf.data.ErrorInfoDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         #use to collect error info PDU
         self.errorInfo = UInt32Le(errorInfo)
@@ -630,6 +639,7 @@ class FontListDataPDU(CompositeType):
         """
         @param readLen: Max read length
         """
+        log.debug("pdf.data.FontListDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.numberFonts = UInt16Le()
         self.totalNumFonts = UInt16Le()
@@ -648,6 +658,7 @@ class FontMapDataPDU(CompositeType):
         """
         @param readLen: Max read length
         """
+        log.debug("pdf.data.FontMapDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.numberEntries = UInt16Le()
         self.totalNumEntries = UInt16Le()
@@ -660,6 +671,7 @@ class PersistentListEntry(CompositeType):
     @see: http://msdn.microsoft.com/en-us/library/cc240496.aspx
     """  
     def __init__(self):
+        log.debug("pdf.data.PersistentListEntry()")
         CompositeType.__init__(self)
         self.key1 = UInt32Le()
         self.key2 = UInt32Le()
@@ -673,6 +685,7 @@ class PersistentListPDU(CompositeType):
     _PDUTYPE2_ = PDUType2.PDUTYPE2_BITMAPCACHE_PERSISTENT_LIST
     
     def __init__(self, userId = 0, shareId = 0, readLen = None):
+        log.debug("pdf.data.PersistentListPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.numEntriesCache0 = UInt16Le()
         self.numEntriesCache1 = UInt16Le()
@@ -697,6 +710,7 @@ class ClientInputEventPDU(CompositeType):
     _PDUTYPE2_ = PDUType2.PDUTYPE2_INPUT
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.ClientInputEventPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.numEvents = UInt16Le(lambda:len(self.slowPathInputEvents._array))
         self.pad2Octets = UInt16Le()
@@ -709,6 +723,7 @@ class ShutdownRequestPDU(CompositeType):
     """  
     _PDUTYPE2_ = PDUType2.PDUTYPE2_SHUTDOWN_REQUEST
     def __init__(self, readLen = None):
+        log.debug("pdf.data.ShutdownRequestPDU()")
         CompositeType.__init__(self, readLen = readLen)
              
 class ShutdownDeniedPDU(CompositeType):
@@ -718,6 +733,7 @@ class ShutdownDeniedPDU(CompositeType):
     """  
     _PDUTYPE2_ = PDUType2.PDUTYPE2_SHUTDOWN_DENIED
     def __init__(self, readLen = None):
+        log.debug("pdf.data.ShutdownDeniedPDU()")
         CompositeType.__init__(self, readLen = readLen)
 
 class InclusiveRectangle(CompositeType):
@@ -725,6 +741,7 @@ class InclusiveRectangle(CompositeType):
     @see: http://msdn.microsoft.com/en-us/library/cc240643.aspx
     """
     def __init__(self, conditional = lambda:True):
+        log.debug("pdf.data.InclusiveRectangle()")
         CompositeType.__init__(self, conditional = conditional)
         self.left = UInt16Le()
         self.top = UInt16Le()
@@ -738,6 +755,7 @@ class SupressOutputDataPDU(CompositeType):
     _PDUTYPE2_ = PDUType2.PDUTYPE2_SUPPRESS_OUTPUT
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.SupressOutputDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.allowDisplayUpdates = UInt8()
         self.pad3Octets = (UInt8(), UInt8(), UInt8())
@@ -750,6 +768,7 @@ class RefreshRectPDU(CompositeType):
     _PDUTYPE2_ = PDUType2.PDUTYPE2_REFRESH_RECT
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.RefreshRectPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.numberOfAreas = UInt8(lambda:len(self.areasToRefresh._array))
         self.pad3Octets = (UInt8(), UInt8(), UInt8())
@@ -769,6 +788,7 @@ class UpdateDataPDU(CompositeType):
         @param updateData: Update data PDU in accordance with updateType (BitmapUpdateDataPDU)
         @param readLen: Max length to read
         """
+        log.debug("pdf.data.UpdateDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.updateType = UInt16Le(lambda:updateData.__class__._UPDATE_TYPE_)
         
@@ -796,6 +816,7 @@ class SaveSessionInfoPDU(CompositeType):
     _PDUTYPE2_ = PDUType2.PDUTYPE2_SAVE_SESSION_INFO
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.SaveSessionInfoPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.infoType = UInt32Le()
         #TODO parse info data
@@ -807,6 +828,7 @@ class FastPathUpdatePDU(CompositeType):
     @see: http://msdn.microsoft.com/en-us/library/cc240622.aspx
     """
     def __init__(self, updateData = None):
+        log.debug("pdf.data.FastPathUpdatePDU()")
         CompositeType.__init__(self)
         self.updateHeader = UInt8(lambda:updateData.__class__._FASTPATH_UPDATE_TYPE_)
         self.compressionFlags = UInt8(conditional = lambda:((self.updateHeader.value >> 4) & FastPathOutputCompression.FASTPATH_OUTPUT_COMPRESSION_USED))
@@ -840,6 +862,7 @@ class BitmapUpdateDataPDU(CompositeType):
         """
         @param readLen: Max size of packet
         """
+        log.debug("pdf.data.BitmapUpdateDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.numberRectangles = UInt16Le(lambda:len(self.rectangles._array))
         self.rectangles = ArrayType(BitmapData, readLen = self.numberRectangles)
@@ -851,6 +874,7 @@ class OrderUpdateDataPDU(CompositeType):
     @todo: not implemented yet but need it
     """
     def __init__(self, readLen = None):
+        log.debug("pdf.data.OrderUpdateDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.pad2OctetsA = UInt16Le()
         self.numberOrders = UInt16Le(lambda:len(self.orderData._array))
@@ -868,6 +892,7 @@ class BitmapCompressedDataHeader(CompositeType):
         @param scanWidth: width of image
         @param uncompressedSize: size of uncompressed image
         """
+        log.debug("pdf.data.BitmapCompressedDataHeader()")
         CompositeType.__init__(self, conditional = conditional)
         self.cbCompFirstRowSize = UInt16Le(0x0000, constant = True)
         #compressed data size
@@ -891,6 +916,7 @@ class BitmapData(CompositeType):
         @param bitsPerPixel: color depth
         @param bitmapDataStream: data
         """
+        log.debug("pdf.data.BitmapData()")
         CompositeType.__init__(self)
         self.destLeft = UInt16Le(destLeft)
         self.destTop = UInt16Le(destTop)
@@ -912,6 +938,7 @@ class FastPathBitmapUpdateDataPDU(CompositeType):
     _FASTPATH_UPDATE_TYPE_ = FastPathUpdateType.FASTPATH_UPDATETYPE_BITMAP
     
     def __init__(self, readLen = None):
+        log.debug("pdf.data.FastPathBitmapUpdateDataPDU()")
         CompositeType.__init__(self, readLen = readLen)
         self.header = UInt16Le(FastPathUpdateType.FASTPATH_UPDATETYPE_BITMAP, constant = True)
         self.numberRectangles = UInt16Le(lambda:len(self.rectangles._array))
@@ -923,6 +950,7 @@ class SlowPathInputEvent(CompositeType):
     @see: http://msdn.microsoft.com/en-us/library/cc240583.aspx
     """
     def __init__(self, messageData = None):
+        log.debug("pdf.data.SlowPathInputEvent()")
         CompositeType.__init__(self)
         self.eventTime = UInt32Le()
         self.messageType = UInt16Le(lambda:self.slowPathInputData.__class__._INPUT_MESSAGE_TYPE_)
@@ -948,6 +976,7 @@ class SynchronizeEvent(CompositeType):
     _INPUT_MESSAGE_TYPE_ = InputMessageType.INPUT_EVENT_SYNC
     
     def __init__(self):
+        log.debug("pdf.data.SynchronizeEvent()")
         CompositeType.__init__(self)
         self.pad2Octets = UInt16Le()
         self.toggleFlags = UInt32Le()
@@ -960,6 +989,7 @@ class PointerEvent(CompositeType):
     _INPUT_MESSAGE_TYPE_ = InputMessageType.INPUT_EVENT_MOUSE
     
     def __init__(self):
+        log.debug("pdf.data.PointerEvent()")
         CompositeType.__init__(self)
         self.pointerFlags = UInt16Le()
         self.xPos = UInt16Le()
@@ -973,6 +1003,7 @@ class PointerExEvent(CompositeType):
     _INPUT_MESSAGE_TYPE_ = InputMessageType.INPUT_EVENT_MOUSEX
     
     def __init__(self):
+        log.debug("pdf.data.PointerExEvent()")
         CompositeType.__init__(self)
         self.pointerFlags = UInt16Le()
         self.xPos = UInt16Le()
@@ -986,6 +1017,7 @@ class ScancodeKeyEvent(CompositeType):
     _INPUT_MESSAGE_TYPE_ = InputMessageType.INPUT_EVENT_SCANCODE
     
     def __init__(self):
+        log.debug("pdf.data.ScancodeKeyEvent()")
         CompositeType.__init__(self)
         self.keyboardFlags = UInt16Le()
         self.keyCode = UInt16Le()
@@ -999,6 +1031,7 @@ class UnicodeKeyEvent(CompositeType):
     _INPUT_MESSAGE_TYPE_ = InputMessageType.INPUT_EVENT_UNICODE
     
     def __init__(self):
+        log.debug("pdf.data.UnicodeKeyEvent()")
         CompositeType.__init__(self)
         self.keyboardFlags = UInt16Le()
         self.unicode = UInt16Le()
