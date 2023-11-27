@@ -128,6 +128,7 @@ class PDULayer(LayerAutomata, tpkt.IFastPathListener):
         @summary: Send a PDU data to transport layer
         @param pduMessage: PDU message
         """
+        log.debug("PDULayer.sendPDU()")
         self._transport.send(data.PDU(self._transport.getUserId(), pduMessage))
         
     def sendDataPDU(self, pduData):
@@ -135,6 +136,7 @@ class PDULayer(LayerAutomata, tpkt.IFastPathListener):
         @summary: Send an PDUData to transport layer
         @param pduData: PDU data message
         """
+        log.debug("PDULayer.sendDataPDU()")
         self.sendPDU(data.DataPDU(pduData, self._shareId))
 
 class Client(PDULayer):
@@ -174,6 +176,7 @@ class Client(PDULayer):
         Wait Server Synchronize PDU
         @param s: Stream
         """
+        log.debug("PDULayer.recvDemandActivePDU()")
         pdu = data.PDU()
         s.readType(pdu)
         
@@ -202,6 +205,7 @@ class Client(PDULayer):
         Wait Control Cooperate PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvServerSynchronizePDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_SYNCHRONIZE:
@@ -218,6 +222,7 @@ class Client(PDULayer):
         Wait Control Granted PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvServerControlCooperatePDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_COOPERATE:
@@ -234,6 +239,7 @@ class Client(PDULayer):
         Wait Font map PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvServerControlGrantedPDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_GRANTED_CONTROL:
@@ -250,6 +256,7 @@ class Client(PDULayer):
         Wait any PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvServerFontMapPDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_FONTMAP:
@@ -267,6 +274,7 @@ class Client(PDULayer):
         @summary: Main receive function after connection sequence
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvPDU()")
         pdus = ArrayType(data.PDU)
         s.readType(pdus)
         for pdu in pdus:
@@ -285,6 +293,7 @@ class Client(PDULayer):
         @param fastPathS: {Stream} that contain fast path data
         @param secFlag: {SecFlags}
         """
+        log.debug("PDULayer.recvFastPath()")
         updates = ArrayType(data.FastPathUpdatePDU)
         fastPathS.readType(updates)
         for update in updates:
@@ -296,6 +305,7 @@ class Client(PDULayer):
         @summary: read a data PDU object
         @param dataPDU: DataPDU object
         """
+        log.debug("PDULayer.readDataPDU()")
         if dataPDU.shareDataHeader.pduType2.value == data.PDUType2.PDUTYPE2_SET_ERROR_INFO_PDU:
             #ignore 0 error code because is not an error code
             if dataPDU.pduData.errorInfo.value == 0:
@@ -320,6 +330,7 @@ class Client(PDULayer):
         dispatch update data
         @param: {UpdateDataPDU} object
         """
+        log.debug("PDULayer.readUpdateDataPDU()")
         if updateDataPDU.updateType.value == data.UpdateType.UPDATETYPE_BITMAP:
             self._listener.onUpdate(updateDataPDU.updateData.rectangles._array)
         
@@ -327,6 +338,7 @@ class Client(PDULayer):
         """
         @summary: Send all client capabilities
         """
+        log.debug("PDULayer.sendConfirmActivePDU()")
         #init general capability
         generalCapability = self._clientCapabilities[caps.CapsType.CAPSTYPE_GENERAL].capability
         generalCapability.osMajorType.value = caps.MajorType.OSMAJORTYPE_WINDOWS
@@ -364,6 +376,7 @@ class Client(PDULayer):
         """
         @summary: send a synchronize PDU from client to server
         """
+        log.debug("PDULayer.sendClientFinalizeSynchronizePDU()")
         synchronizePDU = data.SynchronizeDataPDU(self._transport.getChannelId())
         self.sendDataPDU(synchronizePDU)
         
@@ -386,6 +399,7 @@ class Client(PDULayer):
         @summary: send client input events
         @param pointerEvents: list of pointer events
         """
+        log.debug("PDULayer.sendInputEvents()")
         pdu = data.ClientInputEventPDU()
         pdu.slowPathInputEvents._array = [data.SlowPathInputEvent(x) for x in pointerEvents]
         self.sendDataPDU(pdu)
@@ -417,6 +431,7 @@ class Server(PDULayer):
         Wait Client Synchronize PDU
         @param s: Stream
         """
+        log.debug("PDULayer.recvConfirmActivePDU()")
         pdu = data.PDU()
         s.readType(pdu)
         
@@ -443,6 +458,7 @@ class Server(PDULayer):
         Wait Control Cooperate PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvClientSynchronizePDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_SYNCHRONIZE:
@@ -458,6 +474,7 @@ class Server(PDULayer):
         Wait Control Request PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvClientControlCooperatePDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_COOPERATE:
@@ -473,6 +490,7 @@ class Server(PDULayer):
         Wait Font List PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvClientControlRequestPDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_REQUEST_CONTROL:
@@ -489,6 +507,7 @@ class Server(PDULayer):
         Wait any PDU
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvClientFontListPDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_FONTLIST:
@@ -508,6 +527,7 @@ class Server(PDULayer):
         @summary: Main receive function after connection sequence
         @param s: Stream from transport layer
         """
+        log.debug("PDULayer.recvPDU()")
         pdu = data.PDU()
         s.readType(pdu)
         if pdu.shareControlHeader.pduType.value == data.PDUType.PDUTYPE_DATAPDU:
@@ -518,6 +538,7 @@ class Server(PDULayer):
         @summary: read a data PDU object
         @param dataPDU: DataPDU object
         """
+        log.debug("PDULayer.readDataPDU()")
         if dataPDU.shareDataHeader.pduType2.value == data.PDUType2.PDUTYPE2_SET_ERROR_INFO_PDU:
             errorMessage = "Unknown code %s"%hex(dataPDU.pduData.errorInfo.value)
             if data.ErrorInfo._MESSAGES_.has_key(dataPDU.pduData.errorInfo):
@@ -537,12 +558,14 @@ class Server(PDULayer):
         Fast path is needed by RDP 8.0
         @param fastPathS: Stream that contain fast path data
         """
+        log.debug("PDULayer.readFlashPath()")
         pass
         
     def sendDemandActivePDU(self):
         """
         @summary: Send server capabilities server automata PDU
         """
+        log.debug("PDULayer.sendDemandActivePDU()")
         #init general capability
         generalCapability = self._serverCapabilities[caps.CapsType.CAPSTYPE_GENERAL].capability
         generalCapability.osMajorType.value = caps.MajorType.OSMAJORTYPE_WINDOWS
@@ -561,6 +584,7 @@ class Server(PDULayer):
         """
         @summary: Send last synchronize packet from server to client
         """
+        log.debug("PDULayer.sendServerFinalizeSynchronizePDU()")
         synchronizePDU = data.SynchronizeDataPDU(self._transport.getChannelId())
         self.sendDataPDU(synchronizePDU)
         
@@ -583,6 +607,7 @@ class Server(PDULayer):
         @summary: Send a PDU data to transport layer
         @param pduMessage: PDU message
         """
+        log.debug("PDULayer.sendPDU()")
         PDULayer.sendPDU(self, pduMessage)
         #restart capabilities exchange in case of deactive reactive sequence
         if isinstance(pduMessage, data.DeactiveAllPDU):
@@ -594,6 +619,7 @@ class Server(PDULayer):
         @summary: Send bitmap update data
         @param bitmapDatas: List of data.BitmapData
         """
+        log.debug("PDULayer.sendBitmapUpdatePDU()")
         #check bitmap header for client that want it (very old client)
         if self._clientCapabilities[caps.CapsType.CAPSTYPE_GENERAL].capability.extraFlags.value & caps.GeneralExtraFlag.NO_BITMAP_COMPRESSION_HDR:
             for bitmapData in bitmapDatas:

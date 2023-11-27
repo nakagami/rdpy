@@ -285,6 +285,7 @@ class AuthenticateMessage(CompositeType):
         log.debug("AuthenticateMessage.getEncryptedRandomSession()={v}")
         return v
 
+
 def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, Workstation):
     """
     @summary: Create an Authenticate Message

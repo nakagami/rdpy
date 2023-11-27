@@ -145,7 +145,6 @@ class X224Layer(LayerAutomata, IStreamSender):
                    And pass to presentation layer
         @param data: Stream
         """
-        log.debug(f"X224Layer.recvData()")
         header = X224DataHeader()
         data.readType(header)
         self._presentation.recv(data)
@@ -156,7 +155,6 @@ class X224Layer(LayerAutomata, IStreamSender):
                    Add TPDU header
         @param message: network.Type message
         """
-        log.debug(f"X224Layer.send()")
         self._transport.send((X224DataHeader(), message))
         
 class Client(X224Layer):

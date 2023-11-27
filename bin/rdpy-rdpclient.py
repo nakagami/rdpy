@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (c) 2014-2015 Sylvain Peyrefitte
 #
@@ -23,17 +23,17 @@ example of use rdpy as rdp client
 
 import sys, os, getopt, socket
 
-from PyQt4 import QtGui, QtCore
-from rdpy.ui.qt4 import RDPClientQt
+#from PyQt4 import QtGui, QtCore
+from rdpy.ui.tk import RDPClient
 from rdpy.protocol.rdp import rdp
 from rdpy.core.error import RDPSecurityNegoFail
 from rdpy.core import rss
 
 import rdpy.core.log as log
-log._LOG_LEVEL = log.Level.INFO
+log._LOG_LEVEL = log.Level.DEBUG
 
 
-class RDPClientQtRecorder(RDPClientQt):
+class RDPClientRecorder(RDPClient):
     """
     @summary: Widget with record session
     """
@@ -44,7 +44,7 @@ class RDPClientQtRecorder(RDPClientQt):
         @param height: {int} height of widget
         @param rssRecorder: {rss.FileRecorder}
         """
-        RDPClientQt.__init__(self, controller, width, height)
+        RDPClient.__init__(self, controller, width, height)
         self._screensize = width, height
         self._rssRecorder = rssRecorder
         
@@ -62,32 +62,36 @@ class RDPClientQtRecorder(RDPClientQt):
         @param data: {str} bitmap data
         """
         #record update
+        log.debug("RDPClientRecorder.onUpdate()")
         self._rssRecorder.update(destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, rss.UpdateFormat.BMP if isCompress else rss.UpdateFormat.RAW, data)
-        RDPClientQt.onUpdate(self, destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, isCompress, data)
+        RDPClient.onUpdate(self, destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, isCompress, data)
     
     def onReady(self):
         """
         @summary: Call when stack is ready
         """
+        log.debug("RDPClientRecorder.onReady()")
         self._rssRecorder.screen(self._screensize[0], self._screensize[1], self._controller.getColorDepth())
-        RDPClientQt.onReady(self)
+        RDPClient.onReady(self)
           
     def onClose(self):
         """
         @summary: Call when stack is close
         """
+        log.debug("RDPClientRecorder.onClose()")
         self._rssRecorder.close()
-        RDPClientQt.onClose(self)
+        RDPClient.onClose(self)
         
     def closeEvent(self, e):
         """
         @summary: Convert Qt close widget event into close stack event
         @param e: QCloseEvent
         """
+        log.debug("RDPClientRecorder.onEvent()")
         self._rssRecorder.close()
-        RDPClientQt.closeEvent(self, e)
+        RDPClient.closeEvent(self, e)
 
-class RDPClientQtFactory(rdp.ClientFactory):
+class RDPClientFactory(rdp.ClientFactory):
     """
     @summary: Factory create a RDP GUI client
     """
@@ -127,23 +131,23 @@ class RDPClientQtFactory(rdp.ClientFactory):
     def buildObserver(self, controller, addr):
         """
         @summary:  Build RFB observer
-                    We use a RDPClientQt as RDP observer
+                    We use a RDPClient as RDP observer
         @param controller: build factory and needed by observer
         @param addr: destination address
-        @return: RDPClientQt
+        @return: RDPClient
         """
         #create client observer
         if self._recodedPath is None:
-            self._client = RDPClientQt(controller, self._width, self._height)
+            self._client = RDPClient(controller, self._width, self._height)
         else:
-            self._client = RDPClientQtRecorder(controller, self._width, self._height, rss.createRecorder(self._recodedPath))
+            self._client = RDPClientRecorder(controller, self._width, self._height, rss.createRecorder(self._recodedPath))
         #create qt widget
         self._w = self._client.getWidget()
-        self._w.setWindowTitle('rdpy-rdpclient')
-        if self._fullscreen:
-            self._w.showFullScreen()
-        else:
-            self._w.show()
+        #self._w.setWindowTitle('rdpy-rdpclient')
+        #if self._fullscreen:
+        #    self._w.showFullScreen()
+        #else:
+        #    self._w.show()
         
         controller.setUsername(self._username)
         controller.setPassword(self._passwod)
@@ -174,7 +178,7 @@ class RDPClientQtFactory(rdp.ClientFactory):
         
         log.info("Lost connection : %s"%reason)
         reactor.stop()
-        app.exit()
+        os._exit(0)
         
     def clientConnectionFailed(self, connector, reason):
         """
@@ -184,7 +188,7 @@ class RDPClientQtFactory(rdp.ClientFactory):
         """
         log.info("Connection failed : %s"%reason)
         reactor.stop()
-        app.exit()
+        os._exit(-1)
         
 def autoDetectKeyboardLayout():
     """
@@ -211,7 +215,7 @@ def autoDetectKeyboardLayout():
     return "en"
         
 def help():
-    print """
+    print ("""
     Usage: rdpy-rdpclient [options] ip[:port]"
     \t-u: user name
     \t-p: password
@@ -222,7 +226,7 @@ def help():
     \t-k: keyboard layout [en|fr] [default : en]
     \t-o: optimized session (disable costly effect) [default : False]
     \t-r: rss_filepath Recorded Session Scenario [default : None]
-    """
+    """)
         
 if __name__ == '__main__':
     
@@ -269,20 +273,20 @@ if __name__ == '__main__':
     else:
         ip, port = args[0], "3389"
     
-    #create application
-    app = QtGui.QApplication(sys.argv)
-    
-    #add qt4 reactor
-    import qt4reactor
-    qt4reactor.install()
-    
-    if fullscreen:
-        width = QtGui.QDesktopWidget().screenGeometry().width()
-        height = QtGui.QDesktopWidget().screenGeometry().height()
-    
+#    #create application
+#    app = QtGui.QApplication(sys.argv)
+#    
+#    #add qt4 reactor
+#    import qt4reactor
+#    qt4reactor.install()
+#    
+#    if fullscreen:
+#        width = QtGui.QDesktopWidget().screenGeometry().width()
+#        height = QtGui.QDesktopWidget().screenGeometry().height()
+#    
     log.info("keyboard layout set to %s"%keyboardLayout)
     
     from twisted.internet import reactor
-    reactor.connectTCP(ip, int(port), RDPClientQtFactory(width, height, username, password, domain, fullscreen, keyboardLayout, optimized, "nego", recodedPath))
-    reactor.runReturn()
-    app.exec_()
+    reactor.connectTCP(ip, int(port), RDPClientFactory(width, height, username, password, domain, fullscreen, keyboardLayout, optimized, "nego", recodedPath))
+    reactor.run()
+#    app.exec_()

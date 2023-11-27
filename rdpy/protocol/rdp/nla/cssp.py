@@ -226,6 +226,7 @@ class CSSP(protocol.Protocol):
         """
         @summary: install proxy
         """
+        log.debug("CSSP.connectionMode()")
         self._layer.transport = self
         self._layer.getDescriptor = lambda:self.transport
         self._layer.connectionMade()
@@ -235,6 +236,7 @@ class CSSP(protocol.Protocol):
         @summary: write data on transport layer
         @param data: {str}
         """
+        log.debug("CSSP.write()")
         self.transport.write(data)
     
     def startTLS(self, sslContext):
@@ -270,6 +272,7 @@ class CSSP(protocol.Protocol):
         #get back public key
         #convert from der to ber...
         pkey = self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()
+
         log.debug(f"{crypto.dump_publickey(crypto.FILETYPE_PEM, pkey).decode('utf-8')}")
         public_numbers = pkey.to_cryptography_key().public_numbers()
         log.debug(f"public_numbers={public_numbers}")
