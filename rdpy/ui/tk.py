@@ -102,7 +102,9 @@ def RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data):
     elif bitsPerPixel == 32:
         if isCompress:
             log.debug(f"RDPBitmapToArray() width={width},height={height},bitPerPixel={bitsPerPixel},isCompress={isCompress},len(data)={len(data)}")
-            #buf = rle.bitmap_decompress(data, width, height, 4)
+            import binascii
+            print(binascii.b2a_hex(data).decode('utf-8'))
+            buf = rle.bitmap_decompress(data, width, height, 4)
             #image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB32)
             pass
         else:
