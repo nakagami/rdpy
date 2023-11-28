@@ -315,8 +315,8 @@ if __name__ == '__main__':
 
     args = p.parse_args()
 
-#    if args.certificate and args.key and not args.sec == "nla":
-#        args.sec = "tls"
+    if args.certificate and args.key and not args.sec == "nla":
+        args.sec = "tls"
 
     log.info("running server on {addr}, using {sec} security layer, proxying to {target}".format(
              addr=args.listen, sec=args.sec.upper(), target=args.target))
