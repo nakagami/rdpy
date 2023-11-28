@@ -102,6 +102,9 @@ def RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data):
     elif bitsPerPixel == 32:
         if isCompress:
             log.debug(f"RDPBitmapToArray() width={width},height={height},bitPerPixel={bitsPerPixel},isCompress={isCompress},len(data)={len(data)}")
+            # 3.1.6.1 Bitmaps with 4 Bits per Pixel
+            # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/73b57f24-6d78-4eeb-9c06-8f892d88f1ab
+
             import binascii
             print(binascii.b2a_hex(data).decode('utf-8'))
             buf = rle.bitmap_decompress(data, width, height, 4)
