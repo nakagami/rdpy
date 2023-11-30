@@ -253,7 +253,7 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
         @param expectedLen: in bytes length use to call next state
         @param callback: callback call when expected length bytes is received
         """
-        log.debug(f"core.layer.RawLayer.expect({expectedLen})")
+        log.debug(f"core.layer.RawLayer.expect({expectedLen},{callback})")
         self._expectedLen = expectedLen
         #default callback is recv from LayerAutomata
         self.setNextState(callback)

@@ -107,7 +107,7 @@ def RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data):
 
             import binascii
             print(binascii.b2a_hex(data).decode('utf-8'))
-            buf = rle.bitmap_decompress(data, width, height, 4)
+            #buf = rle.bitmap_decompress(data, width, height, 4)
             #image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB32)
             pass
         else:

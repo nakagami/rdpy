@@ -177,6 +177,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Fast path header may be on 1 byte more
         @param data: {Stream} from twisted layer
         """
+        log.debug("TPKT.readExtendedFastPathHeader()")
         leftPart = UInt8()
         data.readType(leftPart)
         self._lastShortLength.value &= ~0x80

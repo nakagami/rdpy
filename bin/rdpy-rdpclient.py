@@ -22,6 +22,7 @@ example of use rdpy as rdp client
 """
 
 import sys, os, getopt, socket
+import tkinter
 
 #from PyQt4 import QtGui, QtCore
 from rdpy.ui.tk import RDPClient
@@ -286,7 +287,14 @@ if __name__ == '__main__':
 #    
     log.info("keyboard layout set to %s"%keyboardLayout)
     
-    from twisted.internet import reactor
+    from twisted.internet import reactor, tksupport
+    root = tkinter.Tk()
+    tksupport.install(root)
+    root.geometry("600x400")
+    canvas = tkinter.Canvas(root, width=600, height=400, bg="white")
+    canvas.pack()
+
     reactor.connectTCP(ip, int(port), RDPClientFactory(width, height, username, password, domain, fullscreen, keyboardLayout, optimized, "nego", recodedPath))
+
     reactor.run()
 #    app.exec_()
