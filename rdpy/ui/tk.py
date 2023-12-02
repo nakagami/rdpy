@@ -173,7 +173,7 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         @param e: QKeyEvent
         @param isPressed: event come from press or release action
         """
-        self._controller.sendWheelEvent(e.pos().x(), e.pos().y(), (abs(e.delta()) / 8) / 15, e.delta() < 0, e.orientation() == QtCore.Qt.Horizontal)
+        self._controller.sendWheelEvent(e.pos().x(), e.pos().y(), (abs(e.delta()) // 8) // 15, e.delta() < 0, e.orientation() == QtCore.Qt.Horizontal)
     
     def closeEvent(self, e):
         """
