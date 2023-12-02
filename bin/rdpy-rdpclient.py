@@ -63,7 +63,7 @@ class RDPClientRecorder(RDPClient):
         @param data: {str} bitmap data
         """
         #record update
-        log.debug("RDPClientRecorder.onUpdate()")
+        log.debug(f"RDPClientRecorder.onUpdate() {destLeft}, {destTop}, {destRight}, {destBottom}, {width}, {height}, {bitsPerPixel}, {isCompress}, {data}")
         self._rssRecorder.update(destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, rss.UpdateFormat.BMP if isCompress else rss.UpdateFormat.RAW, data)
         RDPClient.onUpdate(self, destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, isCompress, data)
     

@@ -106,7 +106,7 @@ def RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data):
             # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/73b57f24-6d78-4eeb-9c06-8f892d88f1ab
 
             import binascii
-            print(binascii.b2a_hex(data).decode('utf-8'))
+            #print(binascii.b2a_hex(data).decode('utf-8'))
             #buf = rle.bitmap_decompress(data, width, height, 4)
             #image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB32)
             pass
@@ -195,11 +195,12 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         @param isCompress: {bool} use RLE compression
         @param data: {str} bitmap data
         """
+        log.debug(f"RDPClient.onUpdate({destLeft},{destTop},{destRight},{destBottom},{width},{height},{bitsPerPixel},{isCompress}) start")
         image = RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data)
         #if image need to be cut
         #For bit alignement server may send more than image pixel
         #self._widget.notifyImage(destLeft, destTop, image, destRight - destLeft + 1, destBottom - destTop + 1)
-        log.debug(f"RDPClient.onUpdate({destLeft},{destTop},{destRight},{destBottom},{width},{height},{bitsPerPixel},{isCompress})")
+        log.debug(f"RDPClient.onUpdate({destLeft},{destTop},{destRight},{destBottom},{width},{height},{bitsPerPixel},{isCompress}) end")
     
     def onReady(self):
         """
