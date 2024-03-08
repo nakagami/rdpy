@@ -139,8 +139,10 @@ class RDPClientFactory(rdp.ClientFactory):
         """
         #create client observer
         if self._recodedPath is None:
+            log.info("call RDPClient()")
             self._client = RDPClient(controller, self._width, self._height)
         else:
+            log.info("call RDPClientRecorder()")
             self._client = RDPClientRecorder(controller, self._width, self._height, rss.createRecorder(self._recodedPath))
         #create qt widget
         self._w = self._client.getWidget()
