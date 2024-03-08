@@ -442,7 +442,7 @@ class ShareControlHeader(CompositeType):
         @summary: Set pduType as constant
         @param totalLength: total length of PDU packet
         """
-        log.debug("pdu.data.ShareControlHeader__init__()")
+        log.debug("pdu.data.ShareControlHeader.__init__()")
         CompositeType.__init__(self)
         #share control header
         self.totalLength = UInt16Le(totalLength)
