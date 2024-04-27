@@ -183,7 +183,7 @@ class Client(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DEMANDACTIVEPDU:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvDemandActivePDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         
         self._shareId = pdu.pduMessage.shareId.value
@@ -211,7 +211,7 @@ class Client(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_SYNCHRONIZE:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvServerSynchronizePDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         
         self.setNextState(self.recvServerControlCooperatePDU)
@@ -228,7 +228,7 @@ class Client(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_COOPERATE:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvServerControlCooperatePDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         
         self.setNextState(self.recvServerControlGrantedPDU)
@@ -245,7 +245,7 @@ class Client(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_GRANTED_CONTROL:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvServerControlGrantedPDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         
         self.setNextState(self.recvServerFontMapPDU)
@@ -262,7 +262,7 @@ class Client(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_FONTMAP:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvServerFontMapPDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         
         self.setNextState(self.recvPDU)
@@ -438,7 +438,7 @@ class Server(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_CONFIRMACTIVEPDU:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvConfirmActivePDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         
         for cap in pdu.pduMessage.capabilitySets._array:
@@ -464,7 +464,7 @@ class Server(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_SYNCHRONIZE:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvClientSynchronizePDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         self.setNextState(self.recvClientControlCooperatePDU)
         
@@ -480,7 +480,7 @@ class Server(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_COOPERATE:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvClientControlCooperatePDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         self.setNextState(self.recvClientControlRequestPDU)
         
@@ -496,7 +496,7 @@ class Server(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_CONTROL or pdu.pduMessage.pduData.action.value != data.Action.CTRLACTION_REQUEST_CONTROL:
             #not a blocking error because in deactive reactive sequence 
             #input can be send too but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvClientControlRequestPDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         self.setNextState(self.recvClientFontListPDU)
         
@@ -513,7 +513,7 @@ class Server(PDULayer):
         if pdu.shareControlHeader.pduType.value != data.PDUType.PDUTYPE_DATAPDU or pdu.pduMessage.shareDataHeader.pduType2.value != data.PDUType2.PDUTYPE2_FONTLIST:
             #not a blocking error because in deactive reactive sequence 
             #input can be send but ignored
-            log.debug("Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
+            log.debug("recvClientFontListPDU() Ignore message type %s during connection sequence"%hex(pdu.shareControlHeader.pduType.value))
             return
         
         #finalize server
