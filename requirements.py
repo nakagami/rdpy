@@ -6,3 +6,4 @@ pyasn1
 pycryptodome
 Pillow
 pytest
+PyQt6
