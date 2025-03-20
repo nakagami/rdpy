@@ -24,7 +24,6 @@ QRemoteDesktop is a widget use for render in rdpy
 """
 
 from PyQt6 import QtGui, QtCore
-from rdpy.protocol.rfb.rfb import RFBClientObserver
 from rdpy.protocol.rdp.rdp import RDPClientObserver
 from rdpy.core.error import CallPureVirtualFuntion
 import sys
@@ -76,108 +75,6 @@ def qtImageFormatFromRFBPixelFormat(pixelFormat):
     elif pixelFormat.BitsPerPixel.value == 16:
         return QtGui.QImage.Format_RGB16
 
-class RFBClientQt(RFBClientObserver, QAdaptor):
-    """
-    @summary: QAdaptor for specific RFB protocol stack
-    is to an RFB observer 
-    """   
-    def __init__(self, controller):
-        """
-        @param controller: controller for observer
-        @param width: width of widget
-        @param height: height of widget
-        """
-        RFBClientObserver.__init__(self, controller)
-        self._widget = QRemoteDesktop(1024, 800, self)
-        
-    def getWidget(self):
-        """
-        @return: widget use for render
-        """
-        return self._widget
-    
-    def onUpdate(self, width, height, x, y, pixelFormat, encoding, data):
-        """
-        @summary: Implement RFBClientObserver interface
-        @param width: width of new image
-        @param height: height of new image
-        @param x: x position of new image
-        @param y: y position of new image
-        @param pixelFormat: pixefFormat structure in rfb.message.PixelFormat
-        @param encoding: encoding type rfb.message.Encoding
-        @param data: image data in accordance with pixel format and encoding
-        """
-        imageFormat = qtImageFormatFromRFBPixelFormat(pixelFormat)
-        if imageFormat is None:
-            log.error("Receive image in bad format")
-            return
- 
-        image = QtGui.QImage(data, width, height, imageFormat)
-        self._widget.notifyImage(x, y, image, width, height)
-        
-    def onCutText(self, text):
-        """
-        @summary: event when server send cut text event
-        @param text: text received
-        """
-    
-    def onBell(self):
-        """
-        @summary: event when server send biiip
-        """
-    
-    def onReady(self):
-        """
-        @summary: Event when network stack is ready to receive or send event
-        """
-        (width, height) = self._controller.getScreen()
-        self._widget.resize(width, height)
-        
-    def sendMouseEvent(self, e, isPressed):
-        """
-        @summary: Convert Qt mouse event to RFB mouse event
-        @param e: qMouseEvent
-        @param isPressed: event come from press or release action
-        """
-        button = e.button()
-        buttonNumber = 0
-        if button == QtCore.Qt.LeftButton:
-            buttonNumber = 1
-        elif button == QtCore.Qt.MidButton:
-            buttonNumber = 2
-        elif button == QtCore.Qt.RightButton:
-            buttonNumber = 3  
-        self.mouseEvent(buttonNumber, e.pos().x(), e.pos().y())
-        
-    def sendKeyEvent(self, e, isPressed):
-        """
-        @summary: Convert Qt key press event to RFB press event
-        @param e: qKeyEvent
-        @param isPressed: event come from press or release action
-        """
-        self.keyEvent(isPressed, e.nativeVirtualKey())
-        
-    def sendWheelEvent(self, e):
-        """
-        @summary: Convert Qt wheel event to RFB Wheel event
-        @param e: QKeyEvent
-        @param isPressed: event come from press or release action
-        """
-        pass
-        
-    def closeEvent(self, e):
-        """
-        @summary: Call when you want to close connection
-        @param: QCloseEvent
-        """ 
-        self._controller.close()
-        
-    def onClose(self):
-        """
-        @summary: Call when stack is close
-        """
-        #do something maybe a message
-        pass
 
 def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
     """
@@ -330,102 +227,102 @@ class RDPClientQt(RDPClientObserver, QAdaptor):
         #do something maybe a message
 
         
-class QRemoteDesktop(QtGui.QWidget):
-    """
-    @summary: Qt display widget
-    """
-    def __init__(self, width, height, adaptor):
-        """
-        @param adaptor: {QAdaptor}
-        @param width: {int} width of widget
-        @param height: {int} height of widget
-        """
-        super(QRemoteDesktop, self).__init__()
-        #adaptor use to send
-        self._adaptor = adaptor
-        #set correct size
-        self.resize(width, height)
-        #bind mouse event
-        self.setMouseTracking(True)
-        #buffer image
-        self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
-    
-    def notifyImage(self, x, y, qimage, width, height):
-        """
-        @summary: Function call from QAdaptor
-        @param x: x position of new image
-        @param y: y position of new image
-        @param qimage: new QImage
-        """
-        #fill buffer image
-        with QtGui.QPainter(self._buffer) as qp:
-            qp.drawImage(x, y, qimage, 0, 0, width, height)
-        #force update
-        self.update()
-        
-    def resize(self, width, height):
-        """
-        @summary: override resize function
-        @param width: {int} width of widget
-        @param height: {int} height of widget
-        """
-        self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
-        QtGui.QWidget.resize(self, width, height)
-        
-    def paintEvent(self, e):
-        """
-        @summary: Call when Qt renderer engine estimate that is needed
-        @param e: QEvent
-        """
-        #draw in widget
-        with QtGui.QPainter(self) as qp:
-            qp.drawImage(0, 0, self._buffer)
-        
-    def mouseMoveEvent(self, event):
-        """
-        @summary: Call when mouse move
-        @param event: QMouseEvent
-        """
-        self._adaptor.sendMouseEvent(event, False)
-        
-    def mousePressEvent(self, event):
-        """
-        @summary: Call when button mouse is pressed
-        @param event: QMouseEvent
-        """
-        self._adaptor.sendMouseEvent(event, True)
-        
-    def mouseReleaseEvent(self, event):
-        """
-        @summary: Call when button mouse is released
-        @param event: QMouseEvent
-        """
-        self._adaptor.sendMouseEvent(event, False)
-        
-    def keyPressEvent(self, event):
-        """
-        @summary: Call when button key is pressed
-        @param event: QKeyEvent
-        """
-        self._adaptor.sendKeyEvent(event, True)
-        
-    def keyReleaseEvent(self, event):
-        """
-        @summary: Call when button key is released
-        @param event: QKeyEvent
-        """
-        self._adaptor.sendKeyEvent(event, False)
-        
-    def wheelEvent(self, event):
-        """
-        @summary: Call on wheel event
-        @param event:    QWheelEvent
-        """
-        self._adaptor.sendWheelEvent(event)
-        
-    def closeEvent(self, event):
-        """
-        @summary: Call when widget is closed
-        @param event: QCloseEvent
-        """
-        self._adaptor.closeEvent(event)
+# class QRemoteDesktop(QtGui.QWidget):
+#     """
+#     @summary: Qt display widget
+#     """
+#     def __init__(self, width, height, adaptor):
+#         """
+#         @param adaptor: {QAdaptor}
+#         @param width: {int} width of widget
+#         @param height: {int} height of widget
+#         """
+#         super(QRemoteDesktop, self).__init__()
+#         #adaptor use to send
+#         self._adaptor = adaptor
+#         #set correct size
+#         self.resize(width, height)
+#         #bind mouse event
+#         self.setMouseTracking(True)
+#         #buffer image
+#         self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
+#     
+#     def notifyImage(self, x, y, qimage, width, height):
+#         """
+#         @summary: Function call from QAdaptor
+#         @param x: x position of new image
+#         @param y: y position of new image
+#         @param qimage: new QImage
+#         """
+#         #fill buffer image
+#         with QtGui.QPainter(self._buffer) as qp:
+#             qp.drawImage(x, y, qimage, 0, 0, width, height)
+#         #force update
+#         self.update()
+#         
+#     def resize(self, width, height):
+#         """
+#         @summary: override resize function
+#         @param width: {int} width of widget
+#         @param height: {int} height of widget
+#         """
+#         self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
+#         QtGui.QWidget.resize(self, width, height)
+#         
+#     def paintEvent(self, e):
+#         """
+#         @summary: Call when Qt renderer engine estimate that is needed
+#         @param e: QEvent
+#         """
+#         #draw in widget
+#         with QtGui.QPainter(self) as qp:
+#             qp.drawImage(0, 0, self._buffer)
+#         
+#     def mouseMoveEvent(self, event):
+#         """
+#         @summary: Call when mouse move
+#         @param event: QMouseEvent
+#         """
+#         self._adaptor.sendMouseEvent(event, False)
+#         
+#     def mousePressEvent(self, event):
+#         """
+#         @summary: Call when button mouse is pressed
+#         @param event: QMouseEvent
+#         """
+#         self._adaptor.sendMouseEvent(event, True)
+#         
+#     def mouseReleaseEvent(self, event):
+#         """
+#         @summary: Call when button mouse is released
+#         @param event: QMouseEvent
+#         """
+#         self._adaptor.sendMouseEvent(event, False)
+#         
+#     def keyPressEvent(self, event):
+#         """
+#         @summary: Call when button key is pressed
+#         @param event: QKeyEvent
+#         """
+#         self._adaptor.sendKeyEvent(event, True)
+#         
+#     def keyReleaseEvent(self, event):
+#         """
+#         @summary: Call when button key is released
+#         @param event: QKeyEvent
+#         """
+#         self._adaptor.sendKeyEvent(event, False)
+#         
+#     def wheelEvent(self, event):
+#         """
+#         @summary: Call on wheel event
+#         @param event:    QWheelEvent
+#         """
+#         self._adaptor.sendWheelEvent(event)
+#         
+#     def closeEvent(self, event):
+#         """
+#         @summary: Call when widget is closed
+#         @param event: QCloseEvent
+#         """
+#         self._adaptor.closeEvent(event)

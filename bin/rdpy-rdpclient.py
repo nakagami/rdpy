@@ -24,6 +24,7 @@ example of use rdpy as rdp client
 import sys, os, getopt, socket
 
 from PyQt6 import QtGui
+from PyQt6.QtWidgets import QApplication
 from rdpy.ui.qt6 import RDPClientQt
 from rdpy.protocol.rdp import rdp
 from rdpy.core.error import RDPSecurityNegoFail
@@ -274,11 +275,11 @@ if __name__ == '__main__':
         ip, port = args[0], "3389"
     
     #create application
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     
     #add qt4 reactor
-    import qt4reactor
-    qt4reactor.install()
+    import qt5reactor
+    qt5reactor.install()
     
     if fullscreen:
         width = QtGui.QDesktopWidget().screenGeometry().width()
@@ -288,5 +289,5 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
     reactor.connectTCP(ip, int(port), RDPClientQtFactory(width, height, username, password, domain, fullscreen, keyboardLayout, optimized, "nego", recodedPath))
-    reactor.runReturn()
+#    reactor.runReturn()
     app.exec_()
