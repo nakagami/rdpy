@@ -25,7 +25,7 @@ import sys, os, getopt, socket
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication
-from rdpy.ui.qt6 import RDPClientQt
+from rdpy.ui.qt5 import RDPClientQt
 from rdpy.protocol.rdp import rdp
 from rdpy.core.error import RDPSecurityNegoFail
 from rdpy.core import rss
