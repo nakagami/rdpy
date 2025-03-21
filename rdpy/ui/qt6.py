@@ -91,33 +91,33 @@ def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
     if bitsPerPixel == 15:
         if isCompress:
             buf = rle.bitmap_decompress(data, width, height, 2)
-            image = QtGui.QImage(buf, width, height, QtGui.Format.QImage.Format_RGB555)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB555)
         else:
-            image = QtGui.QImage(data, width, height, QtGui.Format.QImage.Format_RGB555).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB555).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
     
     elif bitsPerPixel == 16:
         if isCompress:
             buf = rle.bitmap_decompress(data, width, height, 2)
-            image = QtGui.QImage(buf, width, height, QtGui.Format.QImage.Format_RGB16)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB16)
         else:
-            image = QtGui.QImage(data, width, height, QtGui.Format.QImage.Format_RGB16).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB16).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
     
     elif bitsPerPixel == 24:
         if isCompress:
             buf = rle.bitmap_decompress(data, width, height, 3)
-            image = QtGui.QImage(buf, width, height, QtGui.Format.QImage.Format_RGB888)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB888)
         else:
-            image = QtGui.QImage(data, width, height, QtGui.Format.QImage.Format_RGB888).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB888).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
             
     elif bitsPerPixel == 32:
         if isCompress:
             buf = rle.bitmap_decompress(data, width, height, 4)
-            image = QtGui.QImage(buf, width, height, QtGui.Format.QImage.Format_RGB32)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB32)
         else:
-            image = QtGui.QImage(data, width, height, QtGui.Format.QImage.Format_RGB32).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB32).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
     else:
         log.error("Receive image in bad format")
-        image = QtGui.QImage(width, height, QtGui.Format.QImage.Format_RGB32)
+        image = QtGui.QImage(width, height, QtGui.QImage.Format.Format_RGB32)
     return image
   
 class RDPClientQt(RDPClientObserver, QAdaptor):
