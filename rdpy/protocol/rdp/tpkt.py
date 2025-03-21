@@ -22,6 +22,7 @@ Transport packet layer implementation
 
 Use to build correct size packet and handle slow path and fast path mode
 """
+import binascii
 from rdpy.core.layer import RawLayer
 from rdpy.core.type import UInt8, UInt16Be, sizeof
 from rdpy.core.error import CallPureVirtualFuntion
@@ -212,7 +213,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Send encompassed data
         @param message: {network.Type} message to send
         """
-        log.debug("TPKT.send()")
+        log.debug(f"TPKT.send() {message}")
         RawLayer.send(self, (UInt8(Action.FASTPATH_ACTION_X224), UInt8(0), UInt16Be(sizeof(message) + 4), message))
         
     def sendFastPath(self, secFlag, fastPathS):
