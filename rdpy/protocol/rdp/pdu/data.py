@@ -892,7 +892,6 @@ class BitmapCompressedDataHeader(CompositeType):
         @param scanWidth: width of image
         @param uncompressedSize: size of uncompressed image
         """
-        log.debug("pdu.data.BitmapCompressedDataHeader()")
         CompositeType.__init__(self, conditional = conditional)
         self.cbCompFirstRowSize = UInt16Le(0x0000, constant = True)
         #compressed data size
