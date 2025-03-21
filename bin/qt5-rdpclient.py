@@ -23,9 +23,9 @@ example of use rdpy as rdp client
 
 import sys, os, getopt, socket
 
-from PyQt6 import QtGui
-from PyQt6.QtWidgets import QApplication
-from rdpy.ui.qt6 import RDPClientQt
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QApplication
+from rdpy.ui.qt5 import RDPClientQt
 from rdpy.protocol.rdp import rdp
 from rdpy.core.error import RDPSecurityNegoFail
 from rdpy.core import rss
@@ -277,8 +277,8 @@ if __name__ == '__main__':
     #create application
     app = QApplication(sys.argv)
     
-    import qreactor
-    qreactor.install()
+    import qt5reactor
+    qt5reactor.install()
     
     if fullscreen:
         width = QtGui.QDesktopWidget().screenGeometry().width()
