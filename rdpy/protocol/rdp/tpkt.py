@@ -140,17 +140,18 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Read header of TPKT packet
         @param data: {Stream} received from twisted layer
         """
-        log.debug("TPKT.readHeader()")
         #first read packet version
         version = UInt8()
         data.readType(version)
         #classic packet
         if version.value == Action.FASTPATH_ACTION_X224:
+            log.debug("TPKT.readHeader() FASTPATH_ACTION_X224")
             #padding
             data.readType(UInt8())
             #read end header
             self.expect(2, self.readExtendedHeader)
         else:
+            log.debug(f"TPKT.readHeader() _lastShortLength={self._lastShortLength}")
             #is fast path packet
             self._secFlag = ((version.value >> 6) & 0x3)
             data.readType(self._lastShortLength)
@@ -177,6 +178,7 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Fast path header may be on 1 byte more
         @param data: {Stream} from twisted layer
         """
+        log.debug("TPKT.readExtendedFastPathHeader()")
         leftPart = UInt8()
         data.readType(leftPart)
         self._lastShortLength.value &= ~0x80
@@ -189,9 +191,11 @@ class TPKT(RawLayer, IFastPathSender):
         @summary: Fast path data
         @param data: {Stream} from twisted layer
         """
-        log.debug("TPKT.recvFastPath()")
+        log.debug(f"TPKT.recvFastPath({data}) _secFlag={self._secFlag}")
         self._fastPathListener.recvFastPath(self._secFlag, data)
+        log.debug("TPKT.recvFastPath() 1")
         self.expect(2, self.readHeader)
+        log.debug("TPKT.recvFastPath() 2")
     
     def readData(self, data):
         """

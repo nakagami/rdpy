@@ -58,7 +58,6 @@ class Layer(object):
         """
         @param presentation: presentation layer
         """
-        log.debug("core.layer.Layer.__init__()")
         #presentation layer higher layer in model
         self._presentation = presentation
         #transport layer under layer in model
@@ -72,7 +71,6 @@ class Layer(object):
         @summary:  Call when transport layer is connected
                     default is send connect event to presentation layer
         """
-        log.debug("core.layer.Layer.connect()")
         if not self._presentation is None:
             self._presentation.connect()
     
@@ -81,7 +79,6 @@ class Layer(object):
         @summary:  Close layer event
                     default is sent to transport layer
         """
-        log.debug("core.layer.Layer.close()")
         if not self._transport is None:
             self._transport.close()
             
@@ -181,7 +178,6 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
         """
         @param presentation: presentation layer in layer list
         """
-        log.debug("core.layer.RawLayer.__init__()")
         #call parent automata
         LayerAutomata.__init__(self, presentation)
         #data buffer received from twisted network layer
@@ -203,7 +199,6 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
                     main event of received data
         @param data: string data receive from twisted
         """
-        log.debug(f"core.layer.RawLayer.dataReceived() {self.transport} len={len(data)}")
         #add in buffer
         self._buffer += data
         #while buffer have expected size call local callback
@@ -233,7 +228,6 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
         """
         @return: the twited file descriptor
         """
-        log.debug("core.layer.RawLayer.getDescripto()")
         return self.transport
         
     def close(self):
@@ -242,7 +236,6 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
                     Use File descriptor directly to not use TLS close
                     Because is bugged
         """
-        log.debug("core.layer.RawLayer.close()")
         FileDescriptor.loseConnection(self.getDescriptor())
             
     def expect(self, expectedLen, callback = None):
@@ -253,7 +246,6 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
         @param expectedLen: in bytes length use to call next state
         @param callback: callback call when expected length bytes is received
         """
-        log.debug(f"core.layer.RawLayer.expect({expectedLen})")
         self._expectedLen = expectedLen
         #default callback is recv from LayerAutomata
         self.setNextState(callback)
@@ -265,8 +257,6 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
                     And send it to transport layer
         @param message: (tuple | Type)
         """
-        log.debug("core.layer.RawLayer.send(self.transport)")
         s = Stream()
         s.writeType(message)
-        log.debug(f"len={len(s.getvalue())}")
         self.transport.write(s.getvalue())

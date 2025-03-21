@@ -504,7 +504,6 @@ class Settings(CompositeType):
         @param messageType: type of block
         @return: specific block of type messageType
         """
-        log.debug("gcc.Settings.getBlock()")
         for i in self.settings._array:
             if i.type.value == messageType:
                 return i.dataBlock

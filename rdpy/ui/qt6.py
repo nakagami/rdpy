@@ -18,11 +18,12 @@
 #
 
 """
-GUI Toolkit specific code
+Qt specific code
 
 QRemoteDesktop is a widget use for render in rdpy
 """
 
+from PyQt6 import QtCore, QtGui, QtWidgets
 from rdpy.protocol.rdp.rdp import RDPClientObserver
 from rdpy.core.error import CallPureVirtualFuntion
 import sys
@@ -30,7 +31,7 @@ import sys
 import rdpy.core.log as log
 import rle
 
-class EventAdaptor(object):
+class QAdaptor(object):
     """
     @summary:  Adaptor model with link between protocol
                 And Qt widget 
@@ -41,7 +42,7 @@ class EventAdaptor(object):
         @param e: QMouseEvent
         @param isPressed: event come from press or release action
         """
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendMouseEvent", "EventAdaptor")) 
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendMouseEvent", "QAdaptor")) 
         
     def sendKeyEvent(self, e, isPressed):
         """
@@ -49,23 +50,33 @@ class EventAdaptor(object):
         @param e: QEvent
         @param isPressed: event come from press or release action
         """
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendKeyEvent", "EventAdaptor"))
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendKeyEvent", "QAdaptor"))
      
     def sendWheelEvent(self, e):
         """
         @summary: Interface to send wheel event to protocol stack
         @param e: QWheelEvent
         """
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendWheelEvent", "EventAdaptor")) 
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "sendWheelEvent", "QAdaptor")) 
     
     def closeEvent(self, e):
         """
         @summary: Call when you want to close connection
         @param: QCloseEvent
         """ 
-        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "closeEvent", "EventAdaptor"))
+        raise CallPureVirtualFuntion("%s:%s defined by interface %s"%(self.__class__, "closeEvent", "QAdaptor"))
     
-def RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data):
+def qtImageFormatFromRFBPixelFormat(pixelFormat):
+    """
+    @summary: convert RFB pixel format to QtGui.QImage format
+    """
+    if pixelFormat.BitsPerPixel.value == 32:
+        return QtGui.QImage.Format.Format_RGB32
+    elif pixelFormat.BitsPerPixel.value == 16:
+        return QtGui.QImage.Format.Format_RGB16
+
+
+def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
     """
     @summary: Bitmap transformation to Qt object
     @param width: width of bitmap
@@ -76,44 +87,40 @@ def RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data):
     """
     image = None
     #allocate
-    buf = None
     
     if bitsPerPixel == 15:
         if isCompress:
             buf = rle.bitmap_decompress(data, width, height, 2)
-            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB555)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB555)
         else:
-            image = QtGui.QImage(data, width, height, QtGui.QImage.Format_RGB555).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB555).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
     
     elif bitsPerPixel == 16:
         if isCompress:
             buf = rle.bitmap_decompress(data, width, height, 2)
-            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB16)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB16)
         else:
-            image = QtGui.QImage(data, width, height, QtGui.QImage.Format_RGB16).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB16).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
     
     elif bitsPerPixel == 24:
         if isCompress:
             buf = rle.bitmap_decompress(data, width, height, 3)
-            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB888)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB888)
         else:
-            image = QtGui.QImage(data, width, height, QtGui.QImage.Format_RGB888).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB888).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
             
     elif bitsPerPixel == 32:
         if isCompress:
-            log.debug(f"RDPBitmapToArray() width={width},height={height},bitPerPixel={bitsPerPixel},isCompress={isCompress},len(data)={len(data)}")
-            #buf = rle.bitmap_decompress(data, width, height, 4)
-            #image = QtGui.QImage(buf, width, height, QtGui.QImage.Format_RGB32)
-            pass
+            buf = rle.bitmap_decompress(data, width, height, 4)
+            image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB32)
         else:
-            #image = QtGui.QImage(data, width, height, QtGui.QImage.Format_RGB32).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
-            pass
+            image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB32).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
     else:
         log.error("Receive image in bad format")
-        image = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
+        image = QtGui.QImage(width, height, QtGui.QImage.Format.Format_RGB32)
     return image
   
-class RDPClient(RDPClientObserver, EventAdaptor):
+class RDPClientQt(RDPClientObserver, QAdaptor):
     """
     @summary: Adaptor for RDP client
     """
@@ -124,7 +131,7 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         @param height: {int} height of widget
         """
         RDPClientObserver.__init__(self, controller)
-        #self._widget = QRemoteDesktop(width, height, self)
+        self._widget = QRemoteDesktop(width, height, self)
         #set widget screen to RDP stack
         controller.setScreen(width, height)
         
@@ -132,8 +139,7 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         """
         @return: widget use for render
         """
-        #return self._widget
-        return None
+        return self._widget
     
     def sendMouseEvent(self, e, isPressed):
         """
@@ -190,11 +196,10 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         @param isCompress: {bool} use RLE compression
         @param data: {str} bitmap data
         """
-        image = RDPBitmapToArray(width, height, bitsPerPixel, isCompress, data)
+        image = RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data)
         #if image need to be cut
         #For bit alignement server may send more than image pixel
-        #self._widget.notifyImage(destLeft, destTop, image, destRight - destLeft + 1, destBottom - destTop + 1)
-        log.debug(f"RDPClient.onUpdate({destLeft},{destTop},{destRight},{destBottom},{width},{height},{bitsPerPixel},{isCompress})")
+        self._widget.notifyImage(destLeft, destTop, image, destRight - destLeft + 1, destBottom - destTop + 1)
     
     def onReady(self):
         """
@@ -218,13 +223,13 @@ class RDPClient(RDPClientObserver, EventAdaptor):
         #do something maybe a message
 
         
-class RemoteDesktop:
+class QRemoteDesktop(QtWidgets.QWidget):
     """
     @summary: Qt display widget
     """
     def __init__(self, width, height, adaptor):
         """
-        @param adaptor: {EventAdaptor}
+        @param adaptor: {QAdaptor}
         @param width: {int} width of widget
         @param height: {int} height of widget
         """
@@ -236,11 +241,11 @@ class RemoteDesktop:
         #bind mouse event
         self.setMouseTracking(True)
         #buffer image
-        self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
+        self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format.Format_RGB32)
     
     def notifyImage(self, x, y, qimage, width, height):
         """
-        @summary: Function call from EventAdaptor
+        @summary: Function call from QAdaptor
         @param x: x position of new image
         @param y: y position of new image
         @param qimage: new QImage
@@ -257,8 +262,8 @@ class RemoteDesktop:
         @param width: {int} width of widget
         @param height: {int} height of widget
         """
-        self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
-        QtGui.QWidget.resize(self, width, height)
+        self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format.Format_RGB32)
+        QtWidgets.QWidget.resize(self, width, height)
         
     def paintEvent(self, e):
         """

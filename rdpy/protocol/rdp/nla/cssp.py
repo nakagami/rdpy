@@ -219,7 +219,7 @@ class CSSP(protocol.Protocol):
         @summary: Call from twisted engine when protocol is closed
         @param reason: str represent reason of close connection
         """
-        log.debug("CSSP.connectionLost()")
+        log.debug(f"CSSP.connectionLost() {reason}")
         self._layer._factory.connectionLost(self, reason)
             
     def connectionMade(self):
