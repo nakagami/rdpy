@@ -941,9 +941,9 @@ bitmap_decompress_wrapper(PyObject* self, PyObject* args)
 		return PyErr_NoMemory();
 	}
 
-//	if(bitmap_decompress((uint8*)dest, width, height, (uint8*)input, input_len, bpp) == False) {
-//		return NULL;
-//	}
+	if(bitmap_decompress((uint8*)dest, width, height, (uint8*)input, input_len, bpp) == False) {
+		return NULL;
+	}
 
 	result = PyByteArray_FromStringAndSize(dest, dest_size);
 
