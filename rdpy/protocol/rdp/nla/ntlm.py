@@ -23,6 +23,7 @@
 """
 
 import hashlib, hmac, struct, datetime
+import binascii
 from Crypto.Hash import MD4 as CryptoMD4
 from . import sspi
 import rdpy.security.pyDes as pyDes
@@ -192,12 +193,12 @@ class ChallengeMessage(CompositeType):
         
     def getTargetName(self):
         v = getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
-        log.debug("ntlm.ChallengeMessage.getTargetName()={v}")
+        log.debug(f"ntlm.ChallengeMessage.getTargetName()={v}")
         return v
     
     def getTargetInfo(self):
         v = getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
-        log.debug("ntlm.ChallengeMessage.getTargetInfo()={v}")
+        log.debug(f"ntlm.ChallengeMessage.getTargetInfo()={binascii.hexlify(v).decode('utf-8')}")
         return v
     
     def getTargetInfoAsAvPairArray(self):
@@ -212,7 +213,8 @@ class ChallengeMessage(CompositeType):
             avPair = AvPair()
             s.readType(avPair)
             if avPair.AvId.value == AvId.MsvAvEOL:
-                log.debug(f"ntlm.ChallengeMessage.getTargetInfoAsAvPairArray() = {result}")
+                for k, v in result.items():
+                    log.debug(f"\t{k}:{binascii.hexlify(v).decode('utf-8')}")
                 return result
             result[avPair.AvId.value] = avPair.Value.value
 
