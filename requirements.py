@@ -7,4 +7,5 @@ pycryptodome
 Pillow
 pytest
 PyQt6
-qt5reactor
+#qt5reactor
+qt-reactr
