@@ -437,7 +437,7 @@ class Client(MCSLayer):
         client automata function
         """
         ccReq = gcc.writeConferenceCreateRequest(self._clientSettings)
-        log.debug(f"sendConnectInitial() ccReq={ccReq[0].value}")
+        log.debug("sendConnectInitial()")
         ccReqStream = Stream()
         ccReqStream.writeType(ccReq)
         
@@ -446,7 +446,6 @@ class Client(MCSLayer):
                self.writeDomainParams(1, 1, 1, 0x420),
                self.writeDomainParams(0xffff, 0xfc17, 0xffff, 0xffff),
                ber.writeOctetstring(ccReqStream.getvalue()))
-        log.debug(f"sendConnectInitial() {tmp=}")
         self._transport.send((ber.writeApplicationTag(Message.MCS_TYPE_CONNECT_INITIAL, sizeof(tmp)), tmp))
         
     def sendErectDomainRequest(self):
