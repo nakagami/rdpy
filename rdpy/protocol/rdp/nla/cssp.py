@@ -292,8 +292,9 @@ class CSSP(protocol.Protocol):
         @summary: the server send the pubKeyBer + 1
         @param data : {str} all data available on buffer
         """
-        log.debug("CSSP.recvPubKeyInc")
+        log.debug(f"CSSP.recvPubKeyInc() {binascii.hexlify(data).decode('utf-8')}")
         request = decodeDERTRequest(data)
+        log.debug(f"{request=}")
         pubKeyInc = self._interface.GSS_UnWrapEx(getPubKeyAuth(request))
         #check pubKeyInc = self._pubKeyBer + 1
         if not (self._pubKeyBer[1:] == pubKeyInc[1:] and self._pubKeyBer[0] + 1 == pubKeyInc[0]):
