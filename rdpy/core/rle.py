@@ -76,7 +76,7 @@ def bitmap_decompress4(input_data, width, height):
     BPP = 4
     size = width * height * BPP
     output = [0] * size
-    return output
+    return bytes(output)
 
     code, input_data = CVAL(input_data)
 #    assert code == 0x10
@@ -97,4 +97,4 @@ def bitmap_decompress4(input_data, width, height):
 
     assert size == total
 
-    return output
+    return bytes(output)
