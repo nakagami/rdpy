@@ -28,8 +28,8 @@ from rdpy.protocol.rdp.rdp import RDPClientObserver
 from rdpy.core.error import CallPureVirtualFuntion
 import sys
 
+from rdpy.core import rle
 import rdpy.core.log as log
-import rle
 
 class QAdaptor(object):
     """
@@ -111,7 +111,7 @@ def RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data):
             
     elif bitsPerPixel == 32:
         if isCompress:
-            buf = rle.bitmap_decompress(data, width, height, 4)
+            buf = rle.bitmap_decompress4(data, width, height)
             image = QtGui.QImage(buf, width, height, QtGui.QImage.Format.Format_RGB32)
         else:
             image = QtGui.QImage(data, width, height, QtGui.QImage.Format.Format_RGB32).transformed(QtGui.QMatrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0))
