@@ -107,7 +107,7 @@ class List(IView):
     """
     List widget simulate by QT painter
     """
-    def __init__(self, labels, width, height, callback, backgroudColor = QtCore.Qt.black):
+    def __init__(self, labels, width, height, callback, backgroudColor = QtGui.QColor(255, 255, 255)):
         self._labels = labels
         self._width = width
         self._height = height
@@ -159,7 +159,7 @@ class List(IView):
         render.drawImage(drawArea)
         
 class Window(IView):
-    def __init__(self, width, height, backgroundColor = QtCore.Qt.black):
+    def __init__(self, width, height, backgroundColor = QtGui.QColor(255, 255, 255)):
         self._views = []
         self._focusIndex = 0
         self._width = width
@@ -185,7 +185,7 @@ class Window(IView):
             view.update(render, force)
             
 class Label(IView):
-    def __init__(self, label, width, height, font = QtGui.QFont(), fontColor = QtCore.Qt.white, backgroundColor = QtCore.Qt.black):
+    def __init__(self, label, width, height, font = QtGui.QFont(), fontColor = QtGui.QColor(0, 0, 0), backgroundColor = QtGui.QColor(255, 255, 255)):
         self._label = label
         self._width = width
         self._height = height
