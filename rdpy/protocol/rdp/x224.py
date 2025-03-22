@@ -180,10 +180,10 @@ class Client(X224Layer):
                     Next state is recvConnectionConfirm
         @see: http://msdn.microsoft.com/en-us/library/cc240500.aspx
         """
-        log.debug("Client.sendConnectRequest()")
         message = ClientConnectionRequestPDU()
         message.protocolNeg.code.value = NegociationType.TYPE_RDP_NEG_REQ
         message.protocolNeg.selectedProtocol.value = self._requestedProtocol
+        log.debug(f"Client.sendConnectRequest() {message}")
         self._transport.send(message)
         self.setNextState(self.recvConnectionConfirm)
         

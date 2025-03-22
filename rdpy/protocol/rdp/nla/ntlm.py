@@ -23,6 +23,7 @@
 """
 
 import hashlib, hmac, struct, datetime
+import binascii
 from Crypto.Hash import MD4 as CryptoMD4
 from . import sspi
 import rdpy.security.pyDes as pyDes
@@ -191,22 +192,29 @@ class ChallengeMessage(CompositeType):
         self.Payload = String()
         
     def getTargetName(self):
-        return getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
+        v = getPayLoadField(self, self.TargetNameLen.value, self.TargetNameBufferOffset.value)
+        log.debug(f"ntlm.ChallengeMessage.getTargetName()={v}")
+        return v
     
     def getTargetInfo(self):
-        return getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
+        v = getPayLoadField(self, self.TargetInfoLen.value, self.TargetInfoBufferOffset.value)
+        log.debug(f"ntlm.ChallengeMessage.getTargetInfo()={binascii.hexlify(v).decode('utf-8')}")
+        return v
     
     def getTargetInfoAsAvPairArray(self):
         """
         @summary: Parse Target info field to retrieve array of AvPair
         @return: {map(AvId, str)}
         """
+        log.debug("ChallengeMessage.getTargetInfoAsAvPairArray()")
         result = {}
         s = Stream(self.getTargetInfo())
         while(True):
             avPair = AvPair()
             s.readType(avPair)
             if avPair.AvId.value == AvId.MsvAvEOL:
+                for k, v in result.items():
+                    log.debug(f"\t{k}:{binascii.hexlify(v).decode('utf-8')}")
                 return result
             result[avPair.AvId.value] = avPair.Value.value
 
@@ -255,19 +263,29 @@ class AuthenticateMessage(CompositeType):
         self.Payload = String()
         
     def getUserName(self):
-        return getPayLoadField(self, self.UserNameLen.value, self.UserNameBufferOffset.value)
+        v = getPayLoadField(self, self.UserNameLen.value, self.UserNameBufferOffset.value)
+        log.debug(f"AuthenticateMessage.getUserName()={v}")
+        return v
     
     def getDomainName(self):
-        return getPayLoadField(self, self.DomainNameLen.value, self.DomainNameBufferOffset.value)
+        v = getPayLoadField(self, self.DomainNameLen.value, self.DomainNameBufferOffset.value)
+        log.debug(f"AuthenticateMessage.getDomainName()={v}")
+        return v
     
     def getLmChallengeResponse(self):
-        return getPayLoadField(self, self.LmChallengeResponseLen.value, self.LmChallengeResponseBufferOffset.value)
+        v = getPayLoadField(self, self.LmChallengeResponseLen.value, self.LmChallengeResponseBufferOffset.value)
+        log.debug("AuthenticateMessage.getLmChallengeResponse()={v}")
+        return v
     
     def getNtChallengeResponse(self):
-        return getPayLoadField(self, self.NtChallengeResponseLen.value, self.NtChallengeResponseBufferOffset.value)
+        v = getPayLoadField(self, self.NtChallengeResponseLen.value, self.NtChallengeResponseBufferOffset.value)
+        log.debug("AuthenticateMessage.getNtChallengeResponse()={v}")
+        return v
     
     def getEncryptedRandomSession(self):
-        return getPayLoadField(self, self.EncryptedRandomSessionLen.value, self.EncryptedRandomSessionBufferOffset.value)
+        v = getPayLoadField(self, self.EncryptedRandomSessionLen.value, self.EncryptedRandomSessionBufferOffset.value)
+        log.debug("AuthenticateMessage.getEncryptedRandomSession()={v}")
+        return v
 
 
 def createAuthenticationMessage(NegFlag, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, Workstation):

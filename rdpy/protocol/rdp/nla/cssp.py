@@ -211,7 +211,8 @@ class CSSP(protocol.Protocol):
         @param data: string data receive from twisted
         """
         # data: 4.1.2 Client X.224 Connection Request PDU
-        log.debug(f"CSSP.dataRecievd() len={len((data))}")
+        # log.debug(f"CSSP.dataRecievd() {binascii.hexlify(data).decode('utf-8')}")
+        log.debug(f"CSSP.dataRecievd() {len(data)=}")
         self._layer.dataReceived(data)
     
     def connectionLost(self, reason):
@@ -236,7 +237,7 @@ class CSSP(protocol.Protocol):
         @summary: write data on transport layer
         @param data: {str}
         """
-        log.debug("CSSP.write()")
+        log.debug(f"CSSP.write() {binascii.hexlify(data).decode('utf-8')}")
         self.transport.write(data)
     
     def startTLS(self, sslContext):
@@ -272,7 +273,11 @@ class CSSP(protocol.Protocol):
         #get back public key
         #convert from der to ber...
         pkey = self.transport.protocol._tlsConnection.get_peer_certificate().get_pubkey()
+
+        log.debug(f"{crypto.dump_publickey(crypto.FILETYPE_PEM, pkey).decode('utf-8')}")
         public_numbers = pkey.to_cryptography_key().public_numbers()
+        log.debug(f"public_numbers={public_numbers}")
+
         rsa = x509.RSAPublicKey()
         rsa.setComponentByName("modulus", univ.Integer(public_numbers.n))
         rsa.setComponentByName("publicExponent", univ.Integer(public_numbers.e))
@@ -288,8 +293,9 @@ class CSSP(protocol.Protocol):
         @summary: the server send the pubKeyBer + 1
         @param data : {str} all data available on buffer
         """
-        log.debug("CSSP.recvPubKeyInc")
+        log.debug(f"CSSP.recvPubKeyInc() {binascii.hexlify(data).decode('utf-8')}")
         request = decodeDERTRequest(data)
+        log.debug(f"{request=}")
         pubKeyInc = self._interface.GSS_UnWrapEx(getPubKeyAuth(request))
         #check pubKeyInc = self._pubKeyBer + 1
         if not (self._pubKeyBer[1:] == pubKeyInc[1:] and self._pubKeyBer[0] + 1 == pubKeyInc[0]):

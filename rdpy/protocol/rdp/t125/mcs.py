@@ -437,6 +437,7 @@ class Client(MCSLayer):
         client automata function
         """
         ccReq = gcc.writeConferenceCreateRequest(self._clientSettings)
+        log.debug("sendConnectInitial()")
         ccReqStream = Stream()
         ccReqStream.writeType(ccReq)
         
