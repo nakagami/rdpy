@@ -196,6 +196,18 @@ class RDPClientQt(RDPClientObserver, QAdaptor):
         @param isCompress: {bool} use RLE compression
         @param data: {str} bitmap data
         """
+        
+        print(f"{destLeft=}")
+        print(f"{destTop=}")
+        print(f"{destRight=}")
+        print(f"{destBottom=}")
+        print(f"{width=}")
+        print(f"{height=}")
+        print(f"{bitsPerPixel=}")
+        print(f"{isCompress=}")
+        print(f"{data[0]=}")
+        print(f"{data=}")
+
         image = RDPBitmapToQtImage(width, height, bitsPerPixel, isCompress, data)
         #if image need to be cut
         #For bit alignement server may send more than image pixel
