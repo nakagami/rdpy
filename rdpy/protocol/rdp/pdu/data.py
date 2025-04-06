@@ -915,7 +915,7 @@ class BitmapData(CompositeType):
         @param bitsPerPixel: color depth
         @param bitmapDataStream: data
         """
-        log.debug("pdu.data.BitmapData()")
+        # log.debug("pdu.data.BitmapData()")
         CompositeType.__init__(self)
         self.destLeft = UInt16Le(destLeft)
         self.destTop = UInt16Le(destTop)

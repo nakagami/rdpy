@@ -1,4 +1,6 @@
 
+# https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/b6a3f5c2-0804-4c10-9d25-a321720fd23e
+
 def CVAL(p):
     return p[0], p[1:]
 
@@ -74,9 +76,10 @@ def bitmap_decompress4(input_data, width, height):
     BPP = 4
     size = width * height * BPP
     output = [0] * size
+    return bytes(output)
 
     code, input_data = CVAL(input_data)
-    assert code == 0x10
+#    assert code == 0x10
 
     total = 1
 
@@ -94,4 +97,4 @@ def bitmap_decompress4(input_data, width, height):
 
     assert size == total
 
-    return output
+    return bytes(output)
