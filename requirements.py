@@ -8,4 +8,4 @@ Pillow
 pytest
 PyQt6
 #qt5reactor
-qt-reactr
+qt-reactor
