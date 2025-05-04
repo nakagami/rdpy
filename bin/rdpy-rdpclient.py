@@ -221,8 +221,8 @@ def help():
     \t-u: user name
     \t-p: password
     \t-d: domain
-    \t-w: width of screen [default : 1024]
-    \t-l: height of screen [default : 800]
+    \t-w: width of screen [default : 1280]
+    \t-l: height of screen [default : 1024]
     \t-f: enable full screen mode [default : False]
     \t-k: keyboard layout [en|fr] [default : en]
     \t-o: optimized session (disable costly effect) [default : False]
