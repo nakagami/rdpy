@@ -795,11 +795,15 @@ class String(Type, CallableValue):
         
         if not self._until is None:
             toWrite += self._until
-
         if self._unicode:
-            s.write(encodeUnicode(self.value))
+            assert isinstance(self.value, str)
+            v = self.value.encode("utf-16-le")
+            if self._readLen is not None:
+                ln = self._readLen.value
+                v = (v + b"\x00" * ln)[:ln]
         else:
-            s.write(self.value)
+            v = self.value
+        s.write(v)
 
     def __read__(self, s):
         """

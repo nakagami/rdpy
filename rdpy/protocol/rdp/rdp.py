@@ -146,7 +146,7 @@ class RDPClientController(pdu.layer.PDUClientListener):
         """
         @summary: set hostname of machine
         """
-        self._mcsLayer._clientSettings.CS_CORE.clientName.value = hostname[:15] + "\x00" * (15 - len(hostname))
+#        self._mcsLayer._clientSettings.CS_CORE.clientName.value = hostname[:15] + "\x00" * (15 - len(hostname))
         self._secLayer._licenceManager._hostname = hostname
         
     def setSecurityLevel(self, level):
