@@ -235,8 +235,8 @@ if __name__ == '__main__':
     username = ""
     password = ""
     domain = ""
-    width = 1024
-    height = 800
+    width = 1280
+    height = 1024
     fullscreen = False
     optimized = False
     recodedPath = None
