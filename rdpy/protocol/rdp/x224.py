@@ -171,7 +171,7 @@ class Client(X224Layer):
         """
         @summary: Connection request for client send a connection request packet
         """
-        log.debug("Client.connect()")
+        log.debug("x224 Client.connect()")
         self.sendConnectionRequest()
         
     def sendConnectionRequest(self):

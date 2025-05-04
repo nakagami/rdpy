@@ -1,4 +1,5 @@
 #
+
 # Copyright (c) 2014-2015 Sylvain Peyrefitte
 #
 # This file is part of rdpy.
@@ -23,7 +24,6 @@ Join RDPY design with twisted design
 RDPY use Layer Protocol design (like twisted)
 """
 
-import binascii
 from rdpy.core.error import CallPureVirtualFuntion
 from rdpy.core import log
 
@@ -72,6 +72,7 @@ class Layer(object):
                     default is send connect event to presentation layer
         """
         if not self._presentation is None:
+            log.debug("Layer.connect()")
             self._presentation.connect()
     
     def close(self):
@@ -215,6 +216,7 @@ class RawLayer(protocol.Protocol, LayerAutomata, IStreamSender):
         @summary: inherit from twisted protocol
         """
         #join two scheme
+        log.debug("RawLayer.connect()")
         self.connect()
         
     def connectionLost(self, reason):

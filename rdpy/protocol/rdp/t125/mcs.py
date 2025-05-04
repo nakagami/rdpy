@@ -304,7 +304,7 @@ class Client(MCSLayer):
         @param presentation: {Layer} presentation layer
         @param virtualChannels: {Array(Layer)} list additional channels like rdpsnd... [tuple(mcs.ChannelDef, layer)]
         """
-        log.debug(f"Client.__init__({presentation})")
+        log.debug(f"mcs Client.__init__({presentation})")
         MCSLayer.__init__(self, presentation, DomainMCSPDU.SEND_DATA_INDICATION, DomainMCSPDU.SEND_DATA_REQUEST, virtualChannels)
         #use to know state of static channel
         self._isGlobalChannelRequested = False
@@ -318,7 +318,7 @@ class Client(MCSLayer):
         Send ConnectInitial
         Wait ConnectResponse
         """
-        log.debug("Client.connect()")
+        log.debug("mcs Client.connect()")
         self._clientSettings.CS_CORE.serverSelectedProtocol.value = self._transport._selectedProtocol
         #ask for virtual channel
         self._clientSettings.CS_NET.channelDefArray._array = [x for (x, _) in self._virtualChannels]
@@ -333,7 +333,7 @@ class Client(MCSLayer):
         Send channel request or connect upper layer if all channels are connected
         Wait channel confirm
         """
-        log.debug(f"Client.connectNextChannel()")
+        log.debug(f"mcs Client.connectNextChannel()")
         self.setNextState(self.recvChannelJoinConfirm)
         #global channel
         if not self._isGlobalChannelRequested:
