@@ -440,6 +440,7 @@ class Client(MCSLayer):
         @summary: Send connect initial packet
         client automata function
         """
+        # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/2610fcc7-3df4-4166-85bb-2c7ae21f6151
         ccReq = gcc.writeConferenceCreateRequest(self._clientSettings)
         log.debug("Client.sendConnectInitial()")
         ccReqStream = Stream()
@@ -450,6 +451,7 @@ class Client(MCSLayer):
                self.writeDomainParams(1, 1, 1, 0x420),
                self.writeDomainParams(0xffff, 0xfc17, 0xffff, 0xffff),
                ber.writeOctetstring(ccReqStream.getvalue()))
+        log.debug(f"{sizeof(tmp)=}")
         self._transport.send((ber.writeApplicationTag(Message.MCS_TYPE_CONNECT_INITIAL, sizeof(tmp)), tmp))
         
     def sendErectDomainRequest(self):
