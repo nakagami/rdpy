@@ -497,7 +497,7 @@ class Settings(CompositeType):
     @summary: Class which group all clients settings supported by RDPY
     """
     def __init__(self, init = [], readLen = None):
-        log.debug("gcc.Settings.__init__()")
+        log.debug(f"gcc.Settings.__init__() {init=} {readLen=}")
         CompositeType.__init__(self, readLen = readLen)
         self.settings = ArrayType(DataBlock, [DataBlock(i) for i in init])
     

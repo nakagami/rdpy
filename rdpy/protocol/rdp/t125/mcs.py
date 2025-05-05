@@ -318,10 +318,10 @@ class Client(MCSLayer):
         Send ConnectInitial
         Wait ConnectResponse
         """
-        log.debug("mcs Client.connect()")
         self._clientSettings.CS_CORE.serverSelectedProtocol.value = self._transport._selectedProtocol
         #ask for virtual channel
         self._clientSettings.CS_NET.channelDefArray._array = [x for (x, _) in self._virtualChannels]
+        log.debug(f"mcs Client.connect() {self._clientSettings.CS_CORE.serverSelectedProtocol.value=} {self._clientSettings.CS_NET.channelDefArray._array=}")
         #send connect initial
         self.sendConnectInitial()
         #next wait response
@@ -538,6 +538,7 @@ class Server(MCSLayer):
                 #if channel can be handle by serve add it
                 for serverChannelDef, layer in self._virtualChannels:
                     if channelDef.name == serverChannelDef.name:
+                        log.debug(f"Server.recvConnectInitial() {channelDef.name=}")
                         self._channels[i + Channel.MCS_GLOBAL_CHANNEL] = layer
                 i += 1
         
