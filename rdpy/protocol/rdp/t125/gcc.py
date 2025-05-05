@@ -254,7 +254,7 @@ class ClientCoreData(CompositeType):
         self.kbdLayout = UInt32Le(KeyboardLayout.US)
         self.clientBuild = UInt32Le(3790)
         #self.clientName = String("rdpy", readLen = CallableValue(32), unicode = True)
-        self.clientName = String("ELTONS-TEST2", readLen = CallableValue(32), unicode = True)
+        self.clientName = String("ELTONS-DEV2", readLen = CallableValue(32), unicode = True)
         self.keyboardType = UInt32Le(KeyboardType.IBM_101_102_KEYS)
         self.keyboardSubType = UInt32Le(0)
         self.keyboardFnKeys = UInt32Le(12)
