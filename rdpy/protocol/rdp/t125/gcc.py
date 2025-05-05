@@ -244,6 +244,7 @@ class ClientCoreData(CompositeType):
     _TYPE_ = MessageType.CS_CORE
     
     def __init__(self, readLen = None):
+        # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/2610fcc7-3df4-4166-85bb-2c7ae21f6151
         CompositeType.__init__(self, readLen = readLen)
         self.rdpVersion = UInt32Le(Version.RDP_VERSION_5_PLUS)
         self.desktopWidth = UInt16Le(1280)
