@@ -554,6 +554,7 @@ class NTLMv2(sspi.IAuthenticationProtocol):
         @return: {(AuthenticateMessage, NTLMv2SecurityInterface)} Last handshake message and security interface use to encrypt
         @see: https://msdn.microsoft.com/en-us/library/cc236676.aspx
         """
+        log.debug("getAuthenticateMessage()")
         self._challengeMessage = ChallengeMessage()
         s.readType(self._challengeMessage)
         
@@ -576,7 +577,9 @@ class NTLMv2(sspi.IAuthenticationProtocol):
         EncryptedRandomSessionKey = RC4K(KeyExchangeKey, ExportedSessionKey)
         
         domain, user = self._domain, self._user
+        log.debug(f"getAuthenticateMessage() {domain=} {user=}")
         if self._challengeMessage.NegotiateFlags.value & Negotiate.NTLMSSP_NEGOTIATE_UNICODE:
+            log.debug(f"getAuthenticateMessage() enableUnicode=True")
             self._enableUnicode = True
             domain, user = UNICODE(domain), UNICODE(user)
         self._authenticateMessage = createAuthenticationMessage(self._challengeMessage.NegotiateFlags.value, domain, user, NtChallengeResponse, LmChallengeResponse, EncryptedRandomSessionKey, b"")
