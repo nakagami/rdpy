@@ -282,7 +282,19 @@ class ServerCoreData(CompositeType):
         self.rdpVersion = UInt32Le(Version.RDP_VERSION_5_PLUS)
         self.clientRequestedProtocol = UInt32Le(optional = True)
         self.earlyCapabilityFlags = UInt32Le(optional = True)
-        
+
+class ClientClusterData(CompositeType):
+    """
+    @summary: Client cluster setting
+    @see: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/d68c629f-36a1-4a40-afd0-8b3e56d29aac
+    """
+    _TYPE_ = MessageType.CS_CLUSTER
+
+    def __init__(self, readLen = None):
+        CompositeType.__init__(self, readLen = readLen)
+        self.flags = UInt32Le(0x0d)
+        self.redirectedSessionID = UInt32Le()
+
 class ClientSecurityData(CompositeType):
     """
     @summary: Client security setting
@@ -526,7 +538,7 @@ def clientSettings():
     @return: Settings
     """
     log.debug("gcc.Settings.clientSettings()")
-    return Settings([ClientCoreData(), ClientNetworkData(), ClientSecurityData()])
+    return Settings([ClientCoreData(), ClientClusterData(), ClientSecurityData(), ClientNetworkData()])
 
 def serverSettings():
     """
