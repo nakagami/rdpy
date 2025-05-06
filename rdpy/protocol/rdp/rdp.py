@@ -410,7 +410,7 @@ class RDPServerController(pdu.layer.PDUServerListener):
         """
         @return: name of client (information done by RDP)
         """
-        return self._mcsLayer._clientSettings.CS_CORE.clientName.value.strip('\x00')
+        return self._mcsLayer._clientSettings.CS_CORE.clientName.value.decode("utf-8").strip("\x00")
     
     def getUsername(self):
         """
