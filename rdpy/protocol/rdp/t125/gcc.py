@@ -508,7 +508,7 @@ class Settings(CompositeType):
     @summary: Class which group all clients settings supported by RDPY
     """
     def __init__(self, init = [], readLen = None):
-        log.debug(f"gcc.Settings.__init__() {init=} {readLen=}")
+        log.debug(f"gcc.Settings() {init=} {readLen=}")
         CompositeType.__init__(self, readLen = readLen)
         self.settings = ArrayType(DataBlock, [DataBlock(i) for i in init])
     
@@ -536,7 +536,7 @@ def clientSettings():
     @summary: Build settings for client
     @return: Settings
     """
-    log.debug("gcc.Settings.clientSettings()")
+    log.debug("gcc.clientSettings()")
     return Settings([ClientCoreData(), ClientClusterData(), ClientSecurityData(), ClientNetworkData()])
 
 def serverSettings():
@@ -597,6 +597,7 @@ def readConferenceCreateResponse(s):
     
     length = per.readLength(s)
 
+    log.debug(f"gcc.readConferenceCreateResponse() {length=}")
     serverSettings = Settings(readLen = CallableValue(length))
     s.readType(serverSettings)
     log.debug(f"gcc.Settings.readConferenceCreateResponse()={serverSettings}")

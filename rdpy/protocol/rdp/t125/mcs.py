@@ -364,22 +364,31 @@ class Client(MCSLayer):
         Wait Attach User Confirm
         @param data: {Stream}
         """
-        log.debug(f"Client.recvConnectResponse() {data=}")
+        log.debug("Client.recvConnectResponse() 1")
         ber.readApplicationTag(data, UInt8(Message.MCS_TYPE_CONNECT_RESPONSE))
+        log.debug("Client.recvConnectResponse() 2")
         ber.readEnumerated(data)
+        log.debug("Client.recvConnectResponse() 3")
         ber.readInteger(data)
+        log.debug("Client.recvConnectResponse() 4")
         self.readDomainParams(data)
         if not ber.readUniversalTag(data, ber.Tag.BER_TAG_OCTET_STRING, False):
             raise InvalidExpectedDataException("invalid expected BER tag")
+        log.debug("Client.recvConnectResponse() 5")
         gccRequestLength = ber.readLength(data)
+        log.debug("Client.recvConnectResponse() 6")
         if data.dataLen() != gccRequestLength:
             raise InvalidSize("bad size of GCC request")
+        log.debug("Client.recvConnectResponse() 7")
         self._serverSettings = gcc.readConferenceCreateResponse(data)
         
+        log.debug("Client.recvConnectResponse() 8")
         #send domain request
         self.sendErectDomainRequest()
+        log.debug("Client.recvConnectResponse() 9")
         #send attach user request
         self.sendAttachUserRequest()
+        log.debug("Client.recvConnectResponse() 10")
         #now wait user confirm from server
         self.setNextState(self.recvAttachUserConfirm)
         
