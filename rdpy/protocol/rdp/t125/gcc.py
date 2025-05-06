@@ -614,10 +614,6 @@ def writeConferenceCreateRequest(userData):
     # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/2610fcc7-3df4-4166-85bb-2c7ae21f6151
     log.debug(f"writeConferenceCreateRequest() user_data={type(userData)}:{binascii.hexlify(userDataStream.getvalue())}")
 
-    csCoreStream = Stream()
-    csCoreStream.writeType(userData.CS_CORE)
-    log.debug(f"writeConferenceCreateRequest() cs_core={type(userData.CS_CORE)}:{len(csCoreStream.getvalue())}:{binascii.hexlify(csCoreStream.getvalue())}")
-    
     return (per.writeChoice(0), per.writeObjectIdentifier(t124_02_98_oid),
             per.writeLength(len(userDataStream.getvalue()) + 14), per.writeChoice(0),
             per.writeSelection(0x08), per.writeNumericString("1", 1), per.writePadding(1),
