@@ -205,6 +205,7 @@ class Client(X224Layer):
         
         #check presence of negotiation response
         if message.protocolNeg._is_readed:
+            log.debug(f"Client.recvConnectionConfirm() {hex(message.protocolNeg.flag.value)=}")
             self._selectedProtocol = message.protocolNeg.selectedProtocol.value
         else:
             self._selectedProtocol = Protocols.PROTOCOL_RDP
