@@ -537,7 +537,8 @@ def clientSettings():
     @return: Settings
     """
     log.debug("gcc.clientSettings()")
-    return Settings([ClientCoreData(), ClientClusterData(), ClientSecurityData(), ClientNetworkData()])
+#    return Settings([ClientCoreData(), ClientClusterData(), ClientSecurityData(), ClientNetworkData()])
+    return Settings([ClientCoreData(), ClientNetworkData(), ClientSecurityData()])
 
 def serverSettings():
     """
