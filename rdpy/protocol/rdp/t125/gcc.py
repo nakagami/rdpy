@@ -303,7 +303,7 @@ class ClientSecurityData(CompositeType):
     
     def __init__(self, readLen = None):
         CompositeType.__init__(self, readLen = readLen)
-        self.encryptionMethods = UInt32Le(EncryptionMethod.ENCRYPTION_FLAG_40BIT | EncryptionMethod.ENCRYPTION_FLAG_56BIT | EncryptionMethod.ENCRYPTION_FLAG_128BIT)
+        self.encryptionMethods = UInt32Le(EncryptionMethod.ENCRYPTION_FLAG_40BIT | EncryptionMethod.ENCRYPTION_FLAG_56BIT | EncryptionMethod.ENCRYPTION_FLAG_128BIT | EncryptionMethod.FIPS_ENCRYPTION_FLAG)
         self.extEncryptionMethods = UInt32Le()
         
 class ServerSecurityData(CompositeType):
