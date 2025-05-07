@@ -583,6 +583,7 @@ def readConferenceCreateResponse(s):
     @param s: Stream
     @return: ServerSettings 
     """
+    log.debug(f"gcc.readConferenceCreateResponse() {s=}")
     per.readChoice(s)
     per.readObjectIdentifier(s, t124_02_98_oid)
     per.readLength(s)

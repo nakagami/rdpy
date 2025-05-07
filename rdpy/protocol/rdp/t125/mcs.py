@@ -364,6 +364,7 @@ class Client(MCSLayer):
         Wait Attach User Confirm
         @param data: {Stream}
         """
+        # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/d23f7725-876c-48d4-9e41-8288896a19d3
         log.debug("Client.recvConnectResponse() 1")
         ber.readApplicationTag(data, UInt8(Message.MCS_TYPE_CONNECT_RESPONSE))
         log.debug("Client.recvConnectResponse() 2")

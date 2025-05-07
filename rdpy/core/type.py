@@ -459,6 +459,7 @@ class CompositeType(Type):
             try:
                 s.readType(self.__dict__[name])
                 readLen += sizeof(self.__dict__[name])
+                print("CompositeType.__read__()", name, sizeof(self.__dict__[name]))
                 #read is ok but read out of bound
                 if not self._readLen is None and readLen > self._readLen.value:
                     #roll back
@@ -468,6 +469,7 @@ class CompositeType(Type):
                         raise InvalidSize("Impossible to read type %s : read length is too small"%(self.__class__))
                 
             except Exception as e:
+                log.error(str(e))
                 log.error("Error during read %s::%s"%(self.__class__, name))
                 #roll back already read
                 for tmpName in self._typeName:
