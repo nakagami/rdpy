@@ -327,7 +327,7 @@ class ClientTLSContext(ssl.ClientContextFactory):
     @summary: client context factory for open ssl
     """
     def getContext(self):
-        context = SSL.Context(SSL.SSLv23_METHOD)
+        context = SSL.Context(SSL.TLS_METHOD)
         context.set_options(SSL.OP_DONT_INSERT_EMPTY_FRAGMENTS)
         context.set_options(SSL.OP_TLS_BLOCK_PADDING_BUG)
         return context
@@ -345,4 +345,4 @@ class ServerTLSContext(ssl.DefaultOpenSSLContextFactory):
                 self.set_options(SSL.OP_DONT_INSERT_EMPTY_FRAGMENTS)
                 self.set_options(SSL.OP_TLS_BLOCK_PADDING_BUG)
 
-        ssl.DefaultOpenSSLContextFactory.__init__(self, privateKeyFileName, certificateFileName, SSL.SSLv23_METHOD, TPDUSSLContext)
+        ssl.DefaultOpenSSLContextFactory.__init__(self, privateKeyFileName, certificateFileName, SSL.TLS_METHOD, TPDUSSLContext)
