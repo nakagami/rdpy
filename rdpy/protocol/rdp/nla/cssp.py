@@ -211,7 +211,8 @@ class CSSP(protocol.Protocol):
         @param data: string data receive from twisted
         """
         # data: 4.1.2 Client X.224 Connection Request PDU
-        log.debug(f"CSSP.dataRecievd() {len(data)=} {binascii.hexlify(data).decode('utf-8')}")
+        #log.debug(f"CSSP.dataRecievd() {len(data)=} {binascii.hexlify(data).decode('utf-8')}")
+        log.debug(f"CSSP.dataRecievd() {len(data)=}")
         self._layer.dataReceived(data)
     
     def connectionLost(self, reason):
