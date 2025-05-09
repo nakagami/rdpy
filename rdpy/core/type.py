@@ -798,8 +798,9 @@ class String(Type, CallableValue):
         if not self._until is None:
             toWrite += self._until
         if self._unicode:
-            assert isinstance(self.value, str)
-            v = self.value.encode("utf-16-le")
+            v = self.value
+            if isinstance(v, str):
+                v = self.value.encode("utf-16-le")
             if self._readLen is not None:
                 ln = self._readLen.value
                 v = (v + b"\x00" * ln)[:ln]
