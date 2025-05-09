@@ -192,6 +192,7 @@ class MCSLayer(LayerAutomata):
         Send connect to upper channel
         And prepare MCS layer to receive data
         """
+        log.debug(f"mcs Server.allChannelConnected()")
         #connection is done
         self.setNextState(self.recvData)
         #try connection on all requested channel
@@ -333,16 +334,18 @@ class Client(MCSLayer):
         Send channel request or connect upper layer if all channels are connected
         Wait channel confirm
         """
-        log.debug(f"mcs Client.connectNextChannel()")
+        log.debug("mcs Client.connectNextChannel()")
         self.setNextState(self.recvChannelJoinConfirm)
         #global channel
         if not self._isGlobalChannelRequested:
+            log.debug("global channel")
             self.sendChannelJoinRequest(Channel.MCS_GLOBAL_CHANNEL)
             self._isGlobalChannelRequested = True
             return
         
         #user channel
         if not self._isUserChannelRequested:
+            log.debug(f"user channel {self._userId}")
             self.sendChannelJoinRequest(self._userId)
             self._isUserChannelRequested = True
             return
@@ -350,6 +353,7 @@ class Client(MCSLayer):
         #static virtual channel
         if self._nbChannelRequested < self._serverSettings.getBlock(gcc.MessageType.SC_NET).channelCount.value:
             channelId = self._serverSettings.getBlock(gcc.MessageType.SC_NET).channelIdArray[self._nbChannelRequested]
+            log.debug(f"static virtual channel {channelId=}")
             self._nbChannelRequested += 1
             self.sendChannelJoinRequest(channelId)
             return
