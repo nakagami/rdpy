@@ -916,7 +916,11 @@ class Stream(BytesIO):
             return
 
         value.read(self)
-        
+        try:
+            log.debug(f"Stream.readType() {value.value=}")
+        except:
+            pass
+
     def readNextType(self, t):
         """
         @summary: read next type but didn't consume it

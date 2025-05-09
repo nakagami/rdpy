@@ -584,7 +584,7 @@ def readConferenceCreateResponse(s):
     @param s: Stream
     @return: ServerSettings 
     """
-    log.debug(f"gcc.readConferenceCreateResponse() {s=}")
+    log.debug(f"gcc.readConferenceCreateResponse()")
     per.readChoice(s)
     per.readObjectIdentifier(s, t124_02_98_oid)
     per.readLength(s)
@@ -602,7 +602,7 @@ def readConferenceCreateResponse(s):
     log.debug(f"gcc.readConferenceCreateResponse() {length=}")
     serverSettings = Settings(readLen = CallableValue(length))
     s.readType(serverSettings)
-    log.debug(f"gcc.Settings.readConferenceCreateResponse()={serverSettings}")
+    log.debug(f"gcc.Settings.readConferenceCreateResponse() {serverSettings=}")
     return serverSettings
 
 def writeConferenceCreateRequest(userData):
