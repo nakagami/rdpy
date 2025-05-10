@@ -119,7 +119,7 @@ class MCSLayer(LayerAutomata):
             send function of MCS layer
             @param data: {type.Type | Tuple}
             """
-            log.debug(f"mcs.MCSLayer.MCSProxySender.send({data})")
+            log.debug(f"mcs.MCSLayer.MCSProxySender.send({data}) {self._channelId=}")
             self._mcs.send(self._channelId, data)
             
         def close(self):
@@ -192,13 +192,14 @@ class MCSLayer(LayerAutomata):
         Send connect to upper channel
         And prepare MCS layer to receive data
         """
-        log.debug(f"mcs Server.allChannelConnected()")
+        log.debug(f"mcs Server.allChannelConnected() start")
         #connection is done
         self.setNextState(self.recvData)
         #try connection on all requested channel
         for (channelId, layer) in self._channels.items():
             #use proxy for each channel
             MCSLayer.MCSProxySender(layer, self, channelId).connect()
+        log.debug(f"mcs Server.allChannelConnected()  end")
     
     def send(self, channelId, data):
         """
