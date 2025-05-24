@@ -194,9 +194,7 @@ class TPKT(RawLayer, IFastPathSender):
         """
         log.debug(f"TPKT.recvFastPath({data}) _secFlag={self._secFlag}")
         self._fastPathListener.recvFastPath(self._secFlag, data)
-        log.debug("TPKT.recvFastPath() 1")
         self.expect(2, self.readHeader)
-        log.debug("TPKT.recvFastPath() 2")
     
     def readData(self, data):
         """
