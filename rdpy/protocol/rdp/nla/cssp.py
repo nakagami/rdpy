@@ -282,7 +282,9 @@ class CSSP(protocol.Protocol):
         self._pubKeyBer = ber_encoder.encode(rsa)
         
         #send authenticate message with public key encoded
-        self.transport.write(encodeDERTRequest( negoTypes = [ message ], pubKeyAuth = self._interface.GSS_WrapEx(self._pubKeyBer)))
+        b = encodeDERTRequest( negoTypes = [ message ], pubKeyAuth = self._interface.GSS_WrapEx(self._pubKeyBer))
+        log.debug(f"CSSP.recvChallenge() send {binascii.hexlify(b).decode('utf-8')} {len(b)=}")
+        self.transport.write(b)
         #next step is received public key incremented by one
         self.dataReceived = self.recvPubKeyInc
     
